@@ -1,0 +1,7 @@
+../Core/Src/lcd.c:5:6:write_command_LCD	1
+../Core/Src/lcd.c:29:6:write_data_LCD	1
+../Core/Src/lcd.c:53:6:init_LCD	1
+../Core/Src/lcd.c:74:6:write_string_LCD	2
+../Core/Src/lcd.c:80:6:write_string_line	3
+../Core/Src/lcd.c:89:6:clear_display	1
+../Core/Src/lcd.c:95:6:navigate_options	6

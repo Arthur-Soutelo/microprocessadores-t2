@@ -1,0 +1,3 @@
+../Core/Src/keypad.c:4:16:debounce	3
+../Core/Src/keypad.c:22:6:keypad_init	1
+../Core/Src/keypad.c:41:6:keypad_getkey	5
