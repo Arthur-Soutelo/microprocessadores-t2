@@ -2,20 +2,20 @@
 
 // Debounce function to check the key press stability
 static uint8_t debounce(uint8_t row, uint8_t col) {
-    uint8_t count = 0;
-    uint8_t keylast = 0;
+//    uint8_t count = 0;
+//    uint8_t keylast = 0;
     uint8_t keynow = 1;
-    
-    while (count < 7) {
-        HAL_Delay(10); // Adjust debounce delay as needed
+//
+//    while (count < 7) {
+//        HAL_Delay(10); // Adjust debounce delay as needed
         keynow = HAL_GPIO_ReadPin(KEYPAD_GPIO_PORT, row);
-        if (keynow == keylast) {
-            count++;
-        } else {
-            count = 0;
-        }
-        keylast = keynow;
-    }
+//        if (keynow == keylast) {
+//            count++;
+//        } else {
+//            count = 0;
+//        }
+//        keylast = keynow;
+//    }
     return keynow;
 }
 
@@ -39,7 +39,7 @@ void keypad_init(void) {
 }
 
 char keypad_getkey(void) {
-    char row, col;
+    short row, col;
     const char keys[4][4] = {
         {'1', '2', '3', 'A'},
         {'4', '5', '6', 'B'},
