@@ -61,9 +61,9 @@ void Error_Handler(void);
 #define LDR_1_GPIO_Port GPIOA
 #define LDR_2_Pin GPIO_PIN_1
 #define LDR_2_GPIO_Port GPIOA
-#define KEYPAD_COL1_Pin GPIO_PIN_1
+#define KEYPAD_COL1_Pin GPIO_PIN_0
 #define KEYPAD_COL1_GPIO_Port GPIOB
-#define KEYPAD_COL2_Pin GPIO_PIN_2
+#define KEYPAD_COL2_Pin GPIO_PIN_1
 #define KEYPAD_COL2_GPIO_Port GPIOB
 #define KEYPAD_COL3_Pin GPIO_PIN_10
 #define KEYPAD_COL3_GPIO_Port GPIOB
