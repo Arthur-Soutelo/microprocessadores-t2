@@ -26,7 +26,7 @@ void keypad_init(void) {
     GPIO_InitStruct.Pin = COL1_PIN | COL2_PIN | COL3_PIN | COL4_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(KEYPAD_GPIO_PORT, &GPIO_InitStruct);
     
     HAL_GPIO_WritePin(KEYPAD_GPIO_PORT, COL1_PIN | COL2_PIN | COL3_PIN | COL4_PIN, GPIO_PIN_RESET);
@@ -39,7 +39,7 @@ void keypad_init(void) {
 }
 
 char keypad_getkey(void) {
-    uint8_t row, col;
+    char row, col;
     const char keys[4][4] = {
         {'1', '2', '3', 'A'},
         {'4', '5', '6', 'B'},

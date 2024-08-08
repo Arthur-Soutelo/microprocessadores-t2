@@ -56,7 +56,7 @@ void init_LCD(void) {
     GPIO_InitStruct.Pin = RS_PIN | E_PIN | D4_PIN | D5_PIN | D6_PIN | D7_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(LCD_PORT, &GPIO_InitStruct);
 
     // Initialize the LCD

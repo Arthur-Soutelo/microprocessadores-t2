@@ -113,8 +113,12 @@ int main(void)
 
 	 char key = keypad_getkey();
 	 if(key != 0){
+		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+
 		 clear_display();
+		 write_string_line(1,"GOT KEY: ");
 		 write_data_LCD(key);
+		 HAL_Delay(5000);
 	 }
     /* USER CODE END WHILE */
 
