@@ -60,7 +60,25 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+//uint32_t read_adc_value(uint32_t channel)
+//{
+//    ADC_ChannelConfTypeDef sConfig = {0};
+//
+//    // Configure the ADC channel
+//    sConfig.Channel = channel;
+//    sConfig.Rank = ADC_REGULAR_RANK_1;
+//    sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+//    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+//
+//    // Start the ADC conversion
+//    HAL_ADC_Start(&hadc1);
+//
+//    // Poll for conversion completion
+//    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+//
+//    // Get the ADC value
+//    return HAL_ADC_GetValue(&hadc1);
+//}
 /* USER CODE END 0 */
 
 /**
@@ -71,6 +89,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+//	uint32_t ldr1_value, ldr2_value;
 
   /* USER CODE END 1 */
 
@@ -92,15 +111,14 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ADC1_Init();
+//  MX_ADC1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-
   init_LCD();
   keypad_init();
 
   clear_display();
-  write_string_line(1,"TESTE MAIN");
+  write_string_line(1,"   Smart-fARM");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,10 +136,19 @@ int main(void)
 		 write_string_line(1,"GOT KEY: ");
 		 HAL_Delay(10);
 		 write_data_LCD(key);
-		 HAL_Delay(1000);
+		 HAL_Delay(100);
+
+//		 // Read LDR1 value from PA0 (ADC1_IN0)
+//		 ldr1_value = read_adc_value(ADC_CHANNEL_0);
+//
+//		 // Read LDR2 value from PA1 (ADC1_IN1)
+//		 ldr2_value = read_adc_value(ADC_CHANNEL_1);
 
 		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 	 }
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
