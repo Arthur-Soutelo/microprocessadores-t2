@@ -46,7 +46,14 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN PV */
+volatile unsigned short elapsed_time;
 
+short tempo_irrigacao;
+short tempo_desligado;
+
+char flag_temperatura_acima_limite;	// 1 = Acima do Limite, 0 = Abaixo do Limite
+char flag_turno_dia;		// 1 = Dia, 0 = Noite
+char variedade[10];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
