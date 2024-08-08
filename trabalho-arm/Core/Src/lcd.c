@@ -86,7 +86,7 @@ void clear_display(void) {
 
 // Function to display options and navigate between them
 char navigate_options(const char *options[], char num_options) {
-    char current_option = 0;
+    short current_option = 0;
     clear_display();
     write_string_line(1, options[current_option]);
     write_string_line(2, "<-B  A->   [#OK]");

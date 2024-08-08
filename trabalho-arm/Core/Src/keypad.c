@@ -2,14 +2,39 @@
 #include "keypad.h"
 
 // Debounce function to check the key press stability
-static uint8_t debounce(GPIO_TypeDef* row_port, uint16_t row_pin) {
-    uint8_t count = 0;
-    uint8_t keylast = 0;
-    uint8_t keynow = 1;
+static unsigned char debounce(unsigned char row, unsigned char col) {
+    unsigned char count = 0;
+    unsigned char keylast = 1;  // Assume key is not pressed initially
+    unsigned char keynow = 1;
+    GPIO_TypeDef* row_port;
+    uint16_t row_pin;
+
+    // Map row to its GPIO port and pin
+    switch(row) {
+        case 0:
+            row_port = KEYPAD_ROW1_GPIO_Port;
+            row_pin = KEYPAD_ROW1_Pin;
+            break;
+        case 1:
+            row_port = KEYPAD_ROW2_GPIO_Port;
+            row_pin = KEYPAD_ROW2_Pin;
+            break;
+        case 2:
+            row_port = KEYPAD_ROW3_GPIO_Port;
+            row_pin = KEYPAD_ROW3_Pin;
+            break;
+        case 3:
+            row_port = KEYPAD_ROW4_GPIO_Port;
+            row_pin = KEYPAD_ROW4_Pin;
+            break;
+        default:
+            return 1;  // Return '1' if invalid row
+    }
 
     while (count < 7) {
-        HAL_Delay(10); // Adjust debounce delay as needed
+        HAL_Delay(10);  // Debounce delay
         keynow = HAL_GPIO_ReadPin(row_port, row_pin);
+
         if (keynow == keylast) {
             count++;
         } else {
@@ -17,30 +42,19 @@ static uint8_t debounce(GPIO_TypeDef* row_port, uint16_t row_pin) {
         }
         keylast = keynow;
     }
-    return keynow;
+    return keynow;  // Return '0' if key is pressed, '1' if not pressed
 }
 
 void keypad_init(void) {
-    // Set columns as outputs (low)
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-    GPIO_InitStruct.Pin = KEYPAD_COL1_Pin | KEYPAD_COL2_Pin | KEYPAD_COL3_Pin | KEYPAD_COL4_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(KEYPAD_COL1_GPIO_Port, &GPIO_InitStruct);
-
-    HAL_GPIO_WritePin(KEYPAD_COL1_GPIO_Port, KEYPAD_COL1_Pin | KEYPAD_COL2_Pin | KEYPAD_COL3_Pin | KEYPAD_COL4_Pin, GPIO_PIN_RESET);
-
-    // Set rows as inputs with pull-up resistors
-    GPIO_InitStruct.Pin = KEYPAD_ROW1_Pin | KEYPAD_ROW2_Pin | KEYPAD_ROW3_Pin | KEYPAD_ROW4_Pin;
-    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    HAL_GPIO_Init(KEYPAD_ROW1_GPIO_Port, &GPIO_InitStruct);
+    // Initialize all columns to high
+    HAL_GPIO_WritePin(KEYPAD_COL1_GPIO_Port, KEYPAD_COL1_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(KEYPAD_COL2_GPIO_Port, KEYPAD_COL2_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(KEYPAD_COL3_GPIO_Port, KEYPAD_COL3_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(KEYPAD_COL4_GPIO_Port, KEYPAD_COL4_Pin, GPIO_PIN_SET);
 }
 
 char keypad_getkey(void) {
-    short row, col;
+    unsigned char row, col;
     const char keys[4][4] = {
         {'1', '2', '3', 'A'},
         {'4', '5', '6', 'B'},
@@ -59,29 +73,16 @@ char keypad_getkey(void) {
                           GPIO_PIN_RESET);
 
         for (row = 0; row < 4; row++) {
-            if (!HAL_GPIO_ReadPin((row == 0) ? KEYPAD_ROW1_GPIO_Port :
-                                  (row == 1) ? KEYPAD_ROW2_GPIO_Port :
-                                  (row == 2) ? KEYPAD_ROW3_GPIO_Port : KEYPAD_ROW4_GPIO_Port,
-                                  (row == 0) ? KEYPAD_ROW1_Pin :
-                                  (row == 1) ? KEYPAD_ROW2_Pin :
-                                  (row == 2) ? KEYPAD_ROW3_Pin : KEYPAD_ROW4_Pin)) {
-                // Check if key is pressed and debounced
-                if (debounce((row == 0) ? KEYPAD_ROW1_GPIO_Port :
-                             (row == 1) ? KEYPAD_ROW2_GPIO_Port :
-                             (row == 2) ? KEYPAD_ROW3_GPIO_Port : KEYPAD_ROW4_GPIO_Port,
-                             (row == 0) ? KEYPAD_ROW1_Pin :
-                             (row == 1) ? KEYPAD_ROW2_Pin :
-                             (row == 2) ? KEYPAD_ROW3_Pin : KEYPAD_ROW4_Pin)) {
-                    // Reset the column to high
-                    HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-                                      (col == 1) ? KEYPAD_COL2_GPIO_Port :
-                                      (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-                                      (col == 0) ? KEYPAD_COL1_Pin :
-                                      (col == 1) ? KEYPAD_COL2_Pin :
-                                      (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-                                      GPIO_PIN_SET);
-                    return keys[row][col]; // Return the pressed key
-                }
+            if (!debounce(row, col)) {
+                // Reset the column to high
+                HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+                                  (col == 1) ? KEYPAD_COL2_GPIO_Port :
+                                  (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+                                  (col == 0) ? KEYPAD_COL1_Pin :
+                                  (col == 1) ? KEYPAD_COL2_Pin :
+                                  (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+                                  GPIO_PIN_SET);
+                return keys[row][col]; // Return the pressed key
             }
         }
 
@@ -97,4 +98,3 @@ char keypad_getkey(void) {
 
     return 0; // Return 0 if no key is pressed
 }
-

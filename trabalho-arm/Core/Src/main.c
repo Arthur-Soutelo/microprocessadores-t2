@@ -126,36 +126,36 @@ int main(void)
 
   clear_display();
   write_string_line(1,"   Smart-fARM");
+  write_string_line(2,"");
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	  HAL_Delay(2000);
-	clear_display();
-	write_string_line(1,"   Smart-fARM");
-	HAL_Delay(2000);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+	  HAL_Delay(1000);
 
-//	 char key = keypad_getkey();
-//	 if(key != 0){
-//		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+//	clear_display();
+//	write_string_line(1,"   Smart-fARM");
+//	HAL_Delay(2000);
+
+	 char key = keypad_getkey();
+	 if(key != 0){
+		 clear_display();
+		 write_string_line(1,"GOT KEY: ");
+		 write_data_LCD(key);
+		 HAL_Delay(2000);
+		 clear_display();
+		 write_string_line(1,"   Smart-fARM");
+		 write_string_line(2,"");
+
+//		 // Read LDR1 value from PA0 (ADC1_IN0)
+//		 ldr1_value = read_adc_value(ADC_CHANNEL_0);
 //
-//		 clear_display();
-//		 write_string_line(1,"GOT KEY: ");
-//		 HAL_Delay(10);
-//		 write_data_LCD(key);
-//		 HAL_Delay(100);
-//
-////		 // Read LDR1 value from PA0 (ADC1_IN0)
-////		 ldr1_value = read_adc_value(ADC_CHANNEL_0);
-////
-////		 // Read LDR2 value from PA1 (ADC1_IN1)
-////		 ldr2_value = read_adc_value(ADC_CHANNEL_1);
-//
-//		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	 }
+//		 // Read LDR2 value from PA1 (ADC1_IN1)
+//		 ldr2_value = read_adc_value(ADC_CHANNEL_1);
+	 }
 
 
 
@@ -358,7 +358,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : KEYPAD_ROW1_Pin KEYPAD_ROW2_Pin KEYPAD_ROW3_Pin KEYPAD_ROW4_Pin */
   GPIO_InitStruct.Pin = KEYPAD_ROW1_Pin|KEYPAD_ROW2_Pin|KEYPAD_ROW3_Pin|KEYPAD_ROW4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LCD_D4_Pin LCD_D5_Pin LCD_D6_Pin LCD_D7_Pin */
