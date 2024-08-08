@@ -89,8 +89,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  init_LCD();
-  keypad_init();
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -99,6 +98,9 @@ int main(void)
   MX_ADC2_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+
+  init_LCD();
+  keypad_init();
 
   clear_display();
   write_string_line(1,"TESTE MAIN");
