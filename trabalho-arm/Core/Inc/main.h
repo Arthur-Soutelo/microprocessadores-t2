@@ -77,10 +77,6 @@ void Error_Handler(void);
 #define KEYPAD_ROW3_GPIO_Port GPIOB
 #define KEYPAD_ROW4_Pin GPIO_PIN_15
 #define KEYPAD_ROW4_GPIO_Port GPIOB
-#define LCD_RS_Pin GPIO_PIN_8
-#define LCD_RS_GPIO_Port GPIOA
-#define LCD_E_Pin GPIO_PIN_9
-#define LCD_E_GPIO_Port GPIOA
 #define LCD_D4_Pin GPIO_PIN_10
 #define LCD_D4_GPIO_Port GPIOA
 #define LCD_D5_Pin GPIO_PIN_11
@@ -89,6 +85,10 @@ void Error_Handler(void);
 #define LCD_D6_GPIO_Port GPIOA
 #define LCD_D7_Pin GPIO_PIN_13
 #define LCD_D7_GPIO_Port GPIOA
+#define LCD_RS_Pin GPIO_PIN_14
+#define LCD_RS_GPIO_Port GPIOA
+#define LCD_E_Pin GPIO_PIN_15
+#define LCD_E_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
