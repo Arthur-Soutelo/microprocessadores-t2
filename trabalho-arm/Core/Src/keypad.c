@@ -50,7 +50,13 @@ char keypad_getkey(void) {
 
     for (col = 0; col < 4; col++) {
         // Set the current column to low
-        HAL_GPIO_WritePin(KEYPAD_COL1_GPIO_Port, (1 << col) * KEYPAD_COL1_Pin, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
+                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+                          (col == 0) ? KEYPAD_COL1_Pin :
+                          (col == 1) ? KEYPAD_COL2_Pin :
+                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+                          GPIO_PIN_RESET);
 
         for (row = 0; row < 4; row++) {
             if (!HAL_GPIO_ReadPin((row == 0) ? KEYPAD_ROW1_GPIO_Port :
@@ -67,15 +73,28 @@ char keypad_getkey(void) {
                              (row == 1) ? KEYPAD_ROW2_Pin :
                              (row == 2) ? KEYPAD_ROW3_Pin : KEYPAD_ROW4_Pin)) {
                     // Reset the column to high
-                    HAL_GPIO_WritePin(KEYPAD_COL1_GPIO_Port, (1 << col) * KEYPAD_COL1_Pin, GPIO_PIN_SET);
+                    HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+                                      (col == 1) ? KEYPAD_COL2_GPIO_Port :
+                                      (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+                                      (col == 0) ? KEYPAD_COL1_Pin :
+                                      (col == 1) ? KEYPAD_COL2_Pin :
+                                      (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+                                      GPIO_PIN_SET);
                     return keys[row][col]; // Return the pressed key
                 }
             }
         }
 
         // Reset the column to high
-        HAL_GPIO_WritePin(KEYPAD_COL1_GPIO_Port, (1 << col) * KEYPAD_COL1_Pin, GPIO_PIN_SET);
+        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
+                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+                          (col == 0) ? KEYPAD_COL1_Pin :
+                          (col == 1) ? KEYPAD_COL2_Pin :
+                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+                          GPIO_PIN_SET);
     }
 
     return 0; // Return 0 if no key is pressed
 }
+
