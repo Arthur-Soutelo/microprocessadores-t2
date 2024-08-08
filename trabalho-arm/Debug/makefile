@@ -52,6 +52,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 trabalho-arm.list \
 
+OBJCOPY_HEX += \
+trabalho-arm.hex \
+
 OBJCOPY_BIN += \
 trabalho-arm.bin \
 
@@ -78,6 +81,11 @@ trabalho-arm.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+trabalho-arm.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "trabalho-arm.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 trabalho-arm.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "trabalho-arm.bin"
 	@echo 'Finished building: $@'
@@ -85,10 +93,10 @@ trabalho-arm.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout trabalho-arm.bin trabalho-arm.elf trabalho-arm.list trabalho-arm.map
+	-$(RM) default.size.stdout trabalho-arm.bin trabalho-arm.elf trabalho-arm.hex trabalho-arm.list trabalho-arm.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

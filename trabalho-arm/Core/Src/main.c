@@ -118,11 +118,11 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-//  MX_ADC1_Init();
+  MX_ADC1_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   init_LCD();
-  keypad_init();
+  //keypad_init();
 
   clear_display();
   write_string_line(1,"   Smart-fARM");
@@ -133,26 +133,29 @@ int main(void)
   while (1)
   {
 //	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	  HAL_Delay(500);
+//	  HAL_Delay(2000);
+	clear_display();
+	write_string_line(1,"   Smart-fARM");
+	HAL_Delay(2000);
 
-	 char key = keypad_getkey();
-	 if(key != 0){
-		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-
-		 clear_display();
-		 write_string_line(1,"GOT KEY: ");
-		 HAL_Delay(10);
-		 write_data_LCD(key);
-		 HAL_Delay(100);
-
-//		 // Read LDR1 value from PA0 (ADC1_IN0)
-//		 ldr1_value = read_adc_value(ADC_CHANNEL_0);
+//	 char key = keypad_getkey();
+//	 if(key != 0){
+//		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 //
-//		 // Read LDR2 value from PA1 (ADC1_IN1)
-//		 ldr2_value = read_adc_value(ADC_CHANNEL_1);
-
-		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-	 }
+//		 clear_display();
+//		 write_string_line(1,"GOT KEY: ");
+//		 HAL_Delay(10);
+//		 write_data_LCD(key);
+//		 HAL_Delay(100);
+//
+////		 // Read LDR1 value from PA0 (ADC1_IN0)
+////		 ldr1_value = read_adc_value(ADC_CHANNEL_0);
+////
+////		 // Read LDR2 value from PA1 (ADC1_IN1)
+////		 ldr2_value = read_adc_value(ADC_CHANNEL_1);
+//
+//		 HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+//	 }
 
 
 
@@ -330,11 +333,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, KEYPAD_COL1_Pin|KEYPAD_COL2_Pin|KEYPAD_COL3_Pin|KEYPAD_COL4_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, KEYPAD_COL1_Pin|KEYPAD_COL2_Pin|KEYPAD_COL3_Pin|KEYPAD_COL4_Pin
+                          |LCD_RS_Pin|LCD_E_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin|LCD_D7_Pin
-                          |LCD_RS_Pin|LCD_E_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LCD_D4_Pin|LCD_D5_Pin|LCD_D6_Pin|LCD_D7_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PC13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
@@ -343,8 +346,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : KEYPAD_COL1_Pin KEYPAD_COL2_Pin KEYPAD_COL3_Pin KEYPAD_COL4_Pin */
-  GPIO_InitStruct.Pin = KEYPAD_COL1_Pin|KEYPAD_COL2_Pin|KEYPAD_COL3_Pin|KEYPAD_COL4_Pin;
+  /*Configure GPIO pins : KEYPAD_COL1_Pin KEYPAD_COL2_Pin KEYPAD_COL3_Pin KEYPAD_COL4_Pin
+                           LCD_RS_Pin LCD_E_Pin */
+  GPIO_InitStruct.Pin = KEYPAD_COL1_Pin|KEYPAD_COL2_Pin|KEYPAD_COL3_Pin|KEYPAD_COL4_Pin
+                          |LCD_RS_Pin|LCD_E_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -361,13 +366,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : LCD_RS_Pin LCD_E_Pin */
-  GPIO_InitStruct.Pin = LCD_RS_Pin|LCD_E_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
