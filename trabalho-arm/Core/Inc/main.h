@@ -57,9 +57,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LDR_1_Pin GPIO_PIN_3
+#define LDR_1_Pin GPIO_PIN_0
 #define LDR_1_GPIO_Port GPIOA
-#define LDR_2_Pin GPIO_PIN_4
+#define LDR_2_Pin GPIO_PIN_1
 #define LDR_2_GPIO_Port GPIOA
 #define KEYPAD_COL1_Pin GPIO_PIN_1
 #define KEYPAD_COL1_GPIO_Port GPIOB
