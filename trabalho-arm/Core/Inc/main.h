@@ -51,6 +51,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -63,6 +65,8 @@ void Error_Handler(void);
 #define LDR_1_GPIO_Port GPIOA
 #define LDR_2_Pin GPIO_PIN_1
 #define LDR_2_GPIO_Port GPIOA
+#define IRRIGACAO_Pin GPIO_PIN_3
+#define IRRIGACAO_GPIO_Port GPIOA
 #define KEYPAD_COL1_Pin GPIO_PIN_0
 #define KEYPAD_COL1_GPIO_Port GPIOB
 #define KEYPAD_COL2_Pin GPIO_PIN_1
