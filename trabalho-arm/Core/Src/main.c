@@ -70,25 +70,7 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//uint32_t read_adc_value(uint32_t channel)
-//{
-//    ADC_ChannelConfTypeDef sConfig = {0};
-//
-//    // Configure the ADC channel
-//    sConfig.Channel = channel;
-//    sConfig.Rank = ADC_REGULAR_RANK_1;
-//    sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-//    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-//
-//    // Start the ADC conversion
-//    HAL_ADC_Start(&hadc1);
-//
-//    // Poll for conversion completion
-//    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-//
-//    // Get the ADC value
-//    return HAL_ADC_GetValue(&hadc1);
-//}
+
 /* USER CODE END 0 */
 
 /**
@@ -169,21 +151,13 @@ int main(void)
 //	 itoa(ldr2_value,buffer,10);
 //	 write_string_line(2,buffer);
 
-//	 float temperature;
-//	 char buffer [16];
-//	 temperature = Read_Temperature();
-//	 sprintf(buffer, "%.2f", temperature);  // Convert float to string with 2 decimal places
-//	 clear_display();
-//	 write_string_line(1,buffer);
-
-	 clear_display();
-	 write_string_line(1,"LENDO TEMP");
-	 int temperature;
+	 float temperature;
 	 char buffer [16];
-	 temperature = Read_Temperature_INT();
-	 itoa(temperature,buffer,10);
+	 temperature = Read_Temperature();
+	 sprintf(buffer, "%.2f", temperature);  // Convert float to string with 2 decimal places
 	 clear_display();
 	 write_string_line(1,buffer);
+
 
 //	 ldr2_value = read_adc_value(ADC_CHANNEL_TEMPSENSOR);
 //	 char buffer [16];
@@ -278,9 +252,9 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();

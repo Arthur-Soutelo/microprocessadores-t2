@@ -1,10 +1,10 @@
 #MicroXplorer Configuration settings - do not modify
-ADC1.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_0
+ADC1.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_TEMPSENSOR
 ADC1.ContinuousConvMode=ENABLE
 ADC1.IPParameters=Rank-2\#ChannelRegularConversion,Channel-2\#ChannelRegularConversion,SamplingTime-2\#ChannelRegularConversion,NbrOfConversionFlag,ContinuousConvMode,master
 ADC1.NbrOfConversionFlag=1
 ADC1.Rank-2\#ChannelRegularConversion=1
-ADC1.SamplingTime-2\#ChannelRegularConversion=ADC_SAMPLETIME_1CYCLE_5
+ADC1.SamplingTime-2\#ChannelRegularConversion=ADC_SAMPLETIME_55CYCLES_5
 ADC1.master=1
 CAD.formats=[]
 CAD.pinconfig=Dual
