@@ -48,10 +48,10 @@ DMA_HandleTypeDef hdma_adc1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-volatile unsigned short elapsed_time;
+int tempo_irrigacao = 10;
+volatile unsigned int elapsed_time = 0;
+char flag_irrigacao_em_andamento = 0;
 
-short tempo_irrigacao;
-short tempo_desligado;
 
 char flag_temperatura_acima_limite;	// 1 = Acima do Limite, 0 = Abaixo do Limite
 char flag_turno_dia;		// 1 = Dia, 0 = Noite
@@ -93,8 +93,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-    	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3);
-    	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+    	elapsed_time++;
+    	if(elapsed_time >= tempo_irrigacao && flag_irrigacao_em_andamento == 1){
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
+    		flag_irrigacao_em_andamento=0;
+    	}
+    	else if(elapsed_time < tempo_irrigacao && flag_irrigacao_em_andamento == 0){
+    		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_SET);
+    		elapsed_time=0;
+    		flag_irrigacao_em_andamento=1;
+    	}
+    	else if(elapsed_time >= 60 && flag_irrigacao_em_andamento == 0){
+			elapsed_time=0;
+		}
+
     }
 }
 /* USER CODE END 0 */
