@@ -15,10 +15,6 @@ float Read_Temperature(void) {
 
 	float temperature = ((adcVoltage - VOLTAGE_AT_25C) / AVG_SLOPE) + 25;
 
-	// Use the temperature value
-	// For example, send it to a display or serial port
-
-
     return temperature;
 }
 
@@ -51,3 +47,20 @@ uint32_t read_adc_value(uint32_t channel) {
     return adcValue;
 }
 
+float read_light_outside(void) {
+    uint32_t adcValue = 0;
+
+    // Read LDR1 value from PA0 (ADC1_IN0)
+    adcValue = read_adc_value(ADC_CHANNEL_0);
+
+    return adcValue;
+}
+
+float read_light_inside(void) {
+    uint32_t adcValue = 0;
+
+    // Read LDR1 value from PA0 (ADC1_IN0)
+    adcValue = read_adc_value(ADC_CHANNEL_1);
+
+    return adcValue;
+}
