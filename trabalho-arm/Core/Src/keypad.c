@@ -32,7 +32,7 @@ static unsigned char debounce(unsigned char row, unsigned char col) {
     }
 
     while (count < 7) {
-        HAL_Delay(10);  // Debounce delay
+        HAL_Delay(1);  // Debounce delay
         keynow = HAL_GPIO_ReadPin(row_port, row_pin);
 
         if (keynow == keylast) {
@@ -63,38 +63,93 @@ char keypad_getkey(void) {
     };
 
     for (col = 0; col < 4; col++) {
+        GPIO_TypeDef* col_port;
+        uint16_t col_pin;
+
         // Set the current column to low
-        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
-                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-                          (col == 0) ? KEYPAD_COL1_Pin :
-                          (col == 1) ? KEYPAD_COL2_Pin :
-                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-                          GPIO_PIN_RESET);
+        switch (col) {
+            case 0:
+                col_port = KEYPAD_COL1_GPIO_Port;
+                col_pin = KEYPAD_COL1_Pin;
+                break;
+            case 1:
+                col_port = KEYPAD_COL2_GPIO_Port;
+                col_pin = KEYPAD_COL2_Pin;
+                break;
+            case 2:
+                col_port = KEYPAD_COL3_GPIO_Port;
+                col_pin = KEYPAD_COL3_Pin;
+                break;
+            case 3:
+                col_port = KEYPAD_COL4_GPIO_Port;
+                col_pin = KEYPAD_COL4_Pin;
+                break;
+            default:
+                col_port = NULL;  // Invalid column
+                col_pin = 0;
+                break;
+        }
+
+        HAL_GPIO_WritePin(col_port, col_pin, GPIO_PIN_RESET);
 
         for (row = 0; row < 4; row++) {
+
             if (!debounce(row, col)) {
                 // Reset the column to high
-                HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-                                  (col == 1) ? KEYPAD_COL2_GPIO_Port :
-                                  (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-                                  (col == 0) ? KEYPAD_COL1_Pin :
-                                  (col == 1) ? KEYPAD_COL2_Pin :
-                                  (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-                                  GPIO_PIN_SET);
+                HAL_GPIO_WritePin(col_port, col_pin, GPIO_PIN_SET);
                 return keys[row][col]; // Return the pressed key
             }
         }
 
         // Reset the column to high
-        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
-                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-                          (col == 0) ? KEYPAD_COL1_Pin :
-                          (col == 1) ? KEYPAD_COL2_Pin :
-                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-                          GPIO_PIN_SET);
+        HAL_GPIO_WritePin(col_port, col_pin, GPIO_PIN_SET);
     }
 
     return 0; // Return 0 if no key is pressed
 }
+
+//char keypad_getkey(void) {
+//    unsigned char row, col;
+//    const char keys[4][4] = {
+//        {'1', '2', '3', 'A'},
+//        {'4', '5', '6', 'B'},
+//        {'7', '8', '9', 'C'},
+//        {'*', '0', '#', 'D'}
+//    };
+//
+//    for (col = 0; col < 4; col++) {
+//        // Set the current column to low
+//        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+//                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
+//                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+//                          (col == 0) ? KEYPAD_COL1_Pin :
+//                          (col == 1) ? KEYPAD_COL2_Pin :
+//                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+//                          GPIO_PIN_RESET);
+//
+//        for (row = 0; row < 4; row++) {
+//            if (!debounce(row, col)) {
+//                // Reset the column to high
+//                HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+//                                  (col == 1) ? KEYPAD_COL2_GPIO_Port :
+//                                  (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+//                                  (col == 0) ? KEYPAD_COL1_Pin :
+//                                  (col == 1) ? KEYPAD_COL2_Pin :
+//                                  (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+//                                  GPIO_PIN_SET);
+//                return keys[row][col]; // Return the pressed key
+//            }
+//        }
+//
+//        // Reset the column to high
+//        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
+//                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
+//                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
+//                          (col == 0) ? KEYPAD_COL1_Pin :
+//                          (col == 1) ? KEYPAD_COL2_Pin :
+//                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
+//                          GPIO_PIN_SET);
+//    }
+//
+//    return 0; // Return 0 if no key is pressed
+//}
