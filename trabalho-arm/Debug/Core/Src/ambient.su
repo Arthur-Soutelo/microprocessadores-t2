@@ -1,2 +1,4 @@
 ../Core/Src/ambient.c:4:7:Read_Temperature	24	static
-../Core/Src/ambient.c:26:10:read_adc_value	32	static
+../Core/Src/ambient.c:22:10:read_adc_value	32	static
+../Core/Src/ambient.c:50:7:read_light_outside	16	static
+../Core/Src/ambient.c:59:7:read_light_inside	16	static

@@ -156,7 +156,11 @@ int main(void)
 	 temperature = Read_Temperature();
 	 sprintf(buffer, "%.2f", temperature);  // Convert float to string with 2 decimal places
 	 clear_display();
-	 write_string_line(1,buffer);
+	 write_string_line(1,"   Smart-fARM");
+	 write_string_line(2,"    ");
+	 write_string_LCD(buffer);
+	 write_string_LCD("\xDF" "C");
+	 HAL_Delay(2000);
 
 
 //	 ldr2_value = read_adc_value(ADC_CHANNEL_TEMPSENSOR);
