@@ -69,25 +69,25 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//uint32_t read_adc_value(uint32_t channel)
-//{
-//    ADC_ChannelConfTypeDef sConfig = {0};
-//
-//    // Configure the ADC channel
-//    sConfig.Channel = channel;
-//    sConfig.Rank = ADC_REGULAR_RANK_1;
-//    sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-//    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-//
-//    // Start the ADC conversion
-//    HAL_ADC_Start(&hadc1);
-//
-//    // Poll for conversion completion
-//    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-//
-//    // Get the ADC value
-//    return HAL_ADC_GetValue(&hadc1);
-//}
+uint32_t read_adc_value(uint32_t channel)
+{
+    ADC_ChannelConfTypeDef sConfig = {0};
+
+    // Configure the ADC channel
+    sConfig.Channel = channel;
+    sConfig.Rank = ADC_REGULAR_RANK_1;
+    sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+
+    // Start the ADC conversion
+    HAL_ADC_Start(&hadc1);
+
+    // Poll for conversion completion
+    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+
+    // Get the ADC value
+    return HAL_ADC_GetValue(&hadc1);
+}
 /* USER CODE END 0 */
 
 /**
@@ -130,12 +130,17 @@ int main(void)
   clear_display();
   write_string_line(1,"   Smart-fARM");
   write_string_line(2,"");
+  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);// Desliga o Led
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int ldr1_value;
+  int ldr2_value;
   while (1)
   {
+//	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+//	  HAL_Delay(1000);
 
 //	clear_display();
 //	write_string_line(1,"   Smart-fARM");
@@ -151,13 +156,22 @@ int main(void)
 		 write_string_line(1,"   Smart-fARM");
 		 write_string_line(2,"");
 
-//		 // Read LDR1 value from PA0 (ADC1_IN0)
-//		 ldr1_value = read_adc_value(ADC_CHANNEL_0);
-//
-//		 // Read LDR2 value from PA1 (ADC1_IN1)
-//		 ldr2_value = read_adc_value(ADC_CHANNEL_1);
+
+
 	 }
 
+	 // Read LDR1 value from PA0 (ADC1_IN0)
+	 ldr1_value = read_adc_value(ADC_CHANNEL_0);
+
+	 // Read LDR2 value from PA1 (ADC1_IN1)
+	 ldr2_value = read_adc_value(ADC_CHANNEL_1);
+
+	 char buffer [16];
+	 itoa(ldr1_value,buffer,10);
+	 clear_display();
+	 write_string_line(1,buffer);
+	 itoa(ldr2_value,buffer,10);
+	 write_string_line(2,buffer);
 
 
     /* USER CODE END WHILE */
@@ -362,6 +376,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_6;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : KEYPAD_COL1_Pin KEYPAD_COL2_Pin KEYPAD_COL3_Pin KEYPAD_COL4_Pin
                            LCD_RS_Pin LCD_E_Pin */
