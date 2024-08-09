@@ -11,4 +11,7 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 	float Read_Temperature(void);
 	uint32_t read_adc_value(uint32_t channel);
 
+	float read_light_outside(void);
+	float read_light_inside(void);
+
 #endif /* INC_AMBIENT_H_ */
