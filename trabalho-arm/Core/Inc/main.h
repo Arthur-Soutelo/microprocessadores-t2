@@ -32,6 +32,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>         // Include standard integer types
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

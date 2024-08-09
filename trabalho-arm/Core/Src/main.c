@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "keypad.h"
 #include "lcd.h"
+#include "ambient.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -69,25 +70,25 @@ static void MX_TIM1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t read_adc_value(uint32_t channel)
-{
-    ADC_ChannelConfTypeDef sConfig = {0};
-
-    // Configure the ADC channel
-    sConfig.Channel = channel;
-    sConfig.Rank = ADC_REGULAR_RANK_1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
-
-    // Start the ADC conversion
-    HAL_ADC_Start(&hadc1);
-
-    // Poll for conversion completion
-    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-
-    // Get the ADC value
-    return HAL_ADC_GetValue(&hadc1);
-}
+//uint32_t read_adc_value(uint32_t channel)
+//{
+//    ADC_ChannelConfTypeDef sConfig = {0};
+//
+//    // Configure the ADC channel
+//    sConfig.Channel = channel;
+//    sConfig.Rank = ADC_REGULAR_RANK_1;
+//    sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+//    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+//
+//    // Start the ADC conversion
+//    HAL_ADC_Start(&hadc1);
+//
+//    // Poll for conversion completion
+//    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+//
+//    // Get the ADC value
+//    return HAL_ADC_GetValue(&hadc1);
+//}
 /* USER CODE END 0 */
 
 /**
@@ -155,24 +156,40 @@ int main(void)
 		 clear_display();
 		 write_string_line(1,"   Smart-fARM");
 		 write_string_line(2,"");
-
-
-
 	 }
 
-	 // Read LDR1 value from PA0 (ADC1_IN0)
-	 ldr1_value = read_adc_value(ADC_CHANNEL_0);
+//	 // Read LDR1 value from PA0 (ADC1_IN0)
+//	 ldr1_value = read_adc_value(ADC_CHANNEL_0);
+//	 // Read LDR2 value from PA1 (ADC1_IN1)
+//	 ldr2_value = read_adc_value(ADC_CHANNEL_1);
+//	 char buffer [16];
+//	 itoa(ldr1_value,buffer,10);
+//	 clear_display();
+//	 write_string_line(1,buffer);
+//	 itoa(ldr2_value,buffer,10);
+//	 write_string_line(2,buffer);
 
-	 // Read LDR2 value from PA1 (ADC1_IN1)
-	 ldr2_value = read_adc_value(ADC_CHANNEL_1);
+//	 float temperature;
+//	 char buffer [16];
+//	 temperature = Read_Temperature();
+//	 sprintf(buffer, "%.2f", temperature);  // Convert float to string with 2 decimal places
+//	 clear_display();
+//	 write_string_line(1,buffer);
 
+	 clear_display();
+	 write_string_line(1,"LENDO TEMP");
+	 int temperature;
 	 char buffer [16];
-	 itoa(ldr1_value,buffer,10);
+	 temperature = Read_Temperature_INT();
+	 itoa(temperature,buffer,10);
 	 clear_display();
 	 write_string_line(1,buffer);
-	 itoa(ldr2_value,buffer,10);
-	 write_string_line(2,buffer);
 
+//	 ldr2_value = read_adc_value(ADC_CHANNEL_TEMPSENSOR);
+//	 char buffer [16];
+//	 itoa(ldr2_value,buffer,10);
+//	 clear_display();
+//	 write_string_line(1,buffer);
 
     /* USER CODE END WHILE */
 

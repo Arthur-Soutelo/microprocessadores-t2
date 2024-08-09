@@ -1,0 +1,3 @@
+../Core/Src/ambient.c:4:5:Read_Temperature_INT	32	static
+../Core/Src/ambient.c:27:7:Read_Temperature	32	static
+../Core/Src/ambient.c:49:10:read_adc_value	32	static
