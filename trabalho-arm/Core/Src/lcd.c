@@ -11,9 +11,9 @@ void write_command_LCD(uint8_t command) {
     HAL_GPIO_WritePin(LCD_D5_GPIO_Port, LCD_D5_Pin, (command & 0x20) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D6_GPIO_Port, LCD_D6_Pin, (command & 0x40) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D7_GPIO_Port, LCD_D7_Pin, (command & 0x80) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_Delay(10);
+    HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_E_GPIO_Port, LCD_E_Pin, GPIO_PIN_RESET);
-    HAL_Delay(20);
+    HAL_Delay(2);
 
     // Send the lower nibble
     HAL_GPIO_WritePin(LCD_E_GPIO_Port, LCD_E_Pin, GPIO_PIN_SET);
@@ -21,9 +21,9 @@ void write_command_LCD(uint8_t command) {
     HAL_GPIO_WritePin(LCD_D5_GPIO_Port, LCD_D5_Pin, (command & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D6_GPIO_Port, LCD_D6_Pin, (command & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D7_GPIO_Port, LCD_D7_Pin, (command & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_Delay(10);
+    HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_E_GPIO_Port, LCD_E_Pin, GPIO_PIN_RESET);
-    HAL_Delay(20);
+    HAL_Delay(2);
 }
 
 // Function to send data to the LCD
@@ -35,9 +35,9 @@ void write_data_LCD(uint8_t data) {
     HAL_GPIO_WritePin(LCD_D5_GPIO_Port, LCD_D5_Pin, (data & 0x20) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D6_GPIO_Port, LCD_D6_Pin, (data & 0x40) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D7_GPIO_Port, LCD_D7_Pin, (data & 0x80) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_Delay(10);
+    HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_E_GPIO_Port, LCD_E_Pin, GPIO_PIN_RESET);
-    HAL_Delay(20);
+    HAL_Delay(2);
 
     // Send the lower nibble
     HAL_GPIO_WritePin(LCD_E_GPIO_Port, LCD_E_Pin, GPIO_PIN_SET);
@@ -45,9 +45,9 @@ void write_data_LCD(uint8_t data) {
     HAL_GPIO_WritePin(LCD_D5_GPIO_Port, LCD_D5_Pin, (data & 0x02) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D6_GPIO_Port, LCD_D6_Pin, (data & 0x04) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LCD_D7_GPIO_Port, LCD_D7_Pin, (data & 0x08) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_Delay(10);
+    HAL_Delay(1);
     HAL_GPIO_WritePin(LCD_E_GPIO_Port, LCD_E_Pin, GPIO_PIN_RESET);
-    HAL_Delay(20);
+    HAL_Delay(2);
 }
 
 // Function to initialize the LCD

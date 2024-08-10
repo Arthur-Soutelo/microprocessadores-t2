@@ -52,9 +52,13 @@ volatile unsigned char tempo_irrigacao = 10;
 volatile unsigned char elapsed_time = 0;
 char flag_irrigacao_em_andamento = 0;
 
-char flag_temperatura_acima_limite;	// 1 = Acima do Limite, 0 = Abaixo do Limite
-char flag_turno_dia;		// 1 = Dia, 0 = Noite
-char variedade;		// 0-Alface, 1-Pimentao, 2-Morango
+char flag_temperatura_acima_limite = 0;	// 1 = Acima do Limite, 0 = Abaixo do Limite
+char flag_turno_dia = 1;		// 1 = Dia, 0 = Noite
+char variedade = 0;		// 0-Alface, 1-Pimentao, 2-Morango
+
+float temperatura_limite = 30.0;
+
+volatile unsigned int timeout = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,6 +70,7 @@ static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 void select_params(void);
 void menu_selection(void);
+void menu_plant_selection(void);
 void get_name(char code, char* buffer);
 /* USER CODE END PFP */
 
@@ -77,6 +82,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
+    	timeout++;
+
     	elapsed_time++;
     	if(elapsed_time >= tempo_irrigacao && flag_irrigacao_em_andamento == 1){
     		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
@@ -486,6 +493,33 @@ void select_params(void){
 }
 
 void menu_selection(void){
+	const char *options[] = {" Mudar Temp " "\xDF" "C", "  Mudar Planta"};
+	char num_options = sizeof(options) / sizeof(options[0]);
+	char option = navigate_options(options, num_options);
+	switch(option){
+		case 0:
+			menu_temperature_selection();
+			break;
+		case 1:
+			menu_plant_selection();
+			break;
+	}
+}
+
+void menu_temperature_selection(void){
+	clear_display();
+	write_string_line(1,"Digite o Valor:");
+	char buffer[3];
+	temperatura_limite = read_temperature_keypad(buffer);
+	clear_display();
+	write_string_line(1, "Temp Selecionada");
+	write_string_line(2, "      ");
+	write_string_LCD(buffer);
+	write_string_LCD("\xDF" "C");
+	HAL_Delay(3000);
+}
+
+void menu_plant_selection(void){
 	const char *options[] = {"     Alface", "    Pimentao", "    Morango"};
 	char num_options = sizeof(options) / sizeof(options[0]);
 	variedade = navigate_options(options, num_options);

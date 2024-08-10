@@ -1,5 +1,6 @@
 #include "main.h"
 #include "keypad.h"
+#include "lcd.h"
 
 // Debounce function to check the key press stability
 static unsigned char debounce(unsigned char row, unsigned char col) {
@@ -108,48 +109,48 @@ char keypad_getkey(void) {
     return 0; // Return 0 if no key is pressed
 }
 
-//char keypad_getkey(void) {
-//    unsigned char row, col;
-//    const char keys[4][4] = {
-//        {'1', '2', '3', 'A'},
-//        {'4', '5', '6', 'B'},
-//        {'7', '8', '9', 'C'},
-//        {'*', '0', '#', 'D'}
-//    };
-//
-//    for (col = 0; col < 4; col++) {
-//        // Set the current column to low
-//        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-//                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
-//                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-//                          (col == 0) ? KEYPAD_COL1_Pin :
-//                          (col == 1) ? KEYPAD_COL2_Pin :
-//                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-//                          GPIO_PIN_RESET);
-//
-//        for (row = 0; row < 4; row++) {
-//            if (!debounce(row, col)) {
-//                // Reset the column to high
-//                HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-//                                  (col == 1) ? KEYPAD_COL2_GPIO_Port :
-//                                  (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-//                                  (col == 0) ? KEYPAD_COL1_Pin :
-//                                  (col == 1) ? KEYPAD_COL2_Pin :
-//                                  (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-//                                  GPIO_PIN_SET);
-//                return keys[row][col]; // Return the pressed key
-//            }
-//        }
-//
-//        // Reset the column to high
-//        HAL_GPIO_WritePin((col == 0) ? KEYPAD_COL1_GPIO_Port :
-//                          (col == 1) ? KEYPAD_COL2_GPIO_Port :
-//                          (col == 2) ? KEYPAD_COL3_GPIO_Port : KEYPAD_COL4_GPIO_Port,
-//                          (col == 0) ? KEYPAD_COL1_Pin :
-//                          (col == 1) ? KEYPAD_COL2_Pin :
-//                          (col == 2) ? KEYPAD_COL3_Pin : KEYPAD_COL4_Pin,
-//                          GPIO_PIN_SET);
-//    }
-//
-//    return 0; // Return 0 if no key is pressed
-//}
+float read_temperature_keypad(char *buffer) {
+	char key;
+	short index = 0;
+	float temperature_value;
+
+	// Initialize buffer
+	memset(buffer, 0, 2 + 1);
+
+	while (index < 2) {
+		key = keypad_getkey();
+		if (key != 0) { // Check if a key is pressed
+			if (key >= '0' && key <= '9') { // Check if the key is a digit
+				buffer[index++] = key; // Store the digit in the buffer
+				//write_data_LCD(key);
+				clear_display();
+				write_string_line(1,"Digite o Valor:");
+				write_string_line(2,buffer);
+				} else if (key == '#') { // Use '#' as an enter key
+				break; // Exit loop when '#' is pressed
+				} else if (key == '*') { // Use '*' to cancel input
+				// Optionally, clear the buffer
+				memset(buffer, 0, 2 + 1);
+				index = 0; // Reset index
+				clear_display();
+				write_string_line(1,"Digite o Valor:");
+				write_string_line(2,buffer);
+			}
+			// Add a small delay to debounce
+			HAL_Delay(100);
+		}
+	}
+	buffer[index] = '\0'; // Null-terminate the card number
+
+	temperature_value = atof(buffer);
+	if (temperature_value >= 19.0 && temperature_value <= 32.0) {
+		return temperature_value;
+		} else {
+		clear_display();
+		write_string_line(1,"Valor Invalido!");
+		write_string_line(2," 19 < Temp < 32");
+		HAL_Delay(2000); // Exibe a mensagem de erro por 2 segundos
+		return 30.0; // Reseta o valor para 30.0
+	}
+
+}
