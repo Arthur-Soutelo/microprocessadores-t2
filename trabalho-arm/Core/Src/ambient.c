@@ -75,30 +75,52 @@ float read_light_inside(void) {
 
 
 void Regulate_Light_Intensity(void) {
-    // Step 1: Calculate the LDR percentage
+    // Passo 1: Calcular a porcentagem do LDR
     float ldr_percentage = read_light_inside();
 
-    // Get the current PWM duty cycle
+    // Obter o ciclo de trabalho atual do PWM
     uint32_t current_compare = __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4);
 
-    // Step 2: Adjust the PWM duty cycle based on LDR percentage
-    if (ldr_percentage < LDR_MIN_THRESHOLD - (PWM_DEAD_ZONE / 100.0f)) {
-        // Increase light intensity (increase PWM duty cycle) if it's below the threshold
+    if (ldr_percentage < LDR_MIN_THRESHOLD - LDR_DEAD_ZONE) {
+        // Aumentar a intensidade da luz (aumentar o ciclo de trabalho do PWM) se estiver abaixo do limite
         if (current_compare < (htim4.Init.Period - PWM_STEP_SIZE)) {
             __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare + PWM_STEP_SIZE);
         }
-    } else if (ldr_percentage > LDR_MAX_THRESHOLD + (PWM_DEAD_ZONE / 100.0f)) {
-        // Decrease light intensity (decrease PWM duty cycle) if it's above the threshold
-        if (current_compare > PWM_STEP_SIZE) {
-            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare - PWM_STEP_SIZE);
+    } else if (ldr_percentage > LDR_MAX_THRESHOLD + LDR_DEAD_ZONE) {
+        // Diminuir a intensidade da luz (diminuir o ciclo de trabalho do PWM) se estiver acima do limite
+    	if (current_compare > PWM_STEP_SIZE) {
+    	    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare - PWM_STEP_SIZE);
+    	} else {
+    	    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
+    	}
+    } else {
+        // Se a leitura do LDR estiver dentro da faixa desejada, verifique a resposta do ajuste
+        // Faça um ajuste pequeno para verificar a resposta
+		uint32_t adjusted_compare = (current_compare > PWM_ADJUSTMENT_STEP) ?
+									current_compare - PWM_ADJUSTMENT_STEP : 0;
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, adjusted_compare);
+		HAL_Delay(ADJUSTMENT_DELAY);  // Aguarde um curto período para estabilizar a leitura
+
+        // Leia o LDR após o ajuste
+        float new_ldr_percentage = read_light_inside();
+
+        // Se o LDR ainda estiver dentro da faixa, considere o ajuste como adequado
+        if (new_ldr_percentage >= ldr_percentage - LDR_DEAD_ZONE &&
+            new_ldr_percentage <= ldr_percentage + LDR_DEAD_ZONE) {
+            // Se o LDR não mudou significativamente, o ajuste foi adequado
+        } else {
+            // Se o LDR mudou significativamente, ajuste o PWM de volta ao valor anterior
+            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare);
         }
     }
 
-    // Ensure PWM duty cycle stays within valid range (0 to ARR)
-    if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) > htim4.Init.Period) {
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, htim4.Init.Period);
-    } else if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) < 0) {
-        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
-    }
+    // Garantir que o ciclo de trabalho do PWM permaneça dentro da faixa válida (0 a ARR)
+	uint32_t final_compare = __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4);
+	if (final_compare > htim4.Init.Period) {
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, htim4.Init.Period);
+	} else if (final_compare < 0) {
+		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
+	}
+
 }
 
