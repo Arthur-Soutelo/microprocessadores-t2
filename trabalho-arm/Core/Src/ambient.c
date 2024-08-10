@@ -94,24 +94,31 @@ void Regulate_Light_Intensity(void) {
     	    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
     	}
     } else {
-        // Se a leitura do LDR estiver dentro da faixa desejada, verifique a resposta do ajuste
-        // Faça um ajuste pequeno para verificar a resposta
-		uint32_t adjusted_compare = (current_compare > PWM_ADJUSTMENT_STEP) ?
-									current_compare - PWM_ADJUSTMENT_STEP : 0;
-		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, adjusted_compare);
-		HAL_Delay(ADJUSTMENT_DELAY);  // Aguarde um curto período para estabilizar a leitura
+    	// If the LDR reading is within the desired range, leave the PWM unchanged
+		// This simplifies the logic and avoids unnecessary adjustments.
 
-        // Leia o LDR após o ajuste
-        float new_ldr_percentage = read_light_inside();
+    	// A parte a seguir seria para o caso onde o valor do LDR esta na margem mas caso seja pela luz do sol
+    	// o codigo seguinte ira diminuir a intensidade do LED e ver se isso resulta em uma mudança no LDR
+    	// se não resultar, este diminui o LED, caso resulte, volte ao valor anterior
 
-        // Se o LDR ainda estiver dentro da faixa, considere o ajuste como adequado
-        if (new_ldr_percentage >= ldr_percentage - LDR_DEAD_ZONE &&
-            new_ldr_percentage <= ldr_percentage + LDR_DEAD_ZONE) {
-            // Se o LDR não mudou significativamente, o ajuste foi adequado
-        } else {
-            // Se o LDR mudou significativamente, ajuste o PWM de volta ao valor anterior
-            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare);
-        }
+//        // Se a leitura do LDR estiver dentro da faixa desejada, verifique a resposta do ajuste
+//        // Faça um ajuste pequeno para verificar a resposta
+//		uint32_t adjusted_compare = (current_compare > PWM_ADJUSTMENT_STEP) ?
+//									current_compare - PWM_ADJUSTMENT_STEP : 0;
+//		__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, adjusted_compare);
+//		HAL_Delay(ADJUSTMENT_DELAY);  // Aguarde um curto período para estabilizar a leitura
+//
+//        // Leia o LDR após o ajuste
+//        float new_ldr_percentage = read_light_inside();
+//
+//        // Se o LDR ainda estiver dentro da faixa, considere o ajuste como adequado
+//        if (new_ldr_percentage >= ldr_percentage - LDR_DEAD_ZONE &&
+//            new_ldr_percentage <= ldr_percentage + LDR_DEAD_ZONE) {
+//            // Se o LDR não mudou significativamente, o ajuste foi adequado
+//        } else {
+//            // Se o LDR mudou significativamente, ajuste o PWM de volta ao valor anterior
+//            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare);
+//        }
     }
 
     // Garantir que o ciclo de trabalho do PWM permaneça dentro da faixa válida (0 a ARR)

@@ -116,7 +116,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 
     }
-    // TIMER 2
+    // TIMER 2 (Periodo 0,25s)
 	if (htim->Instance == TIM2){
 		/* ==================== DEFINE VARIAVEIS DO SISTEMA ==================== */
 		temperatura_atual = Read_Temperature();
@@ -722,19 +722,25 @@ void menu_main(void){
 
 void menu_actual_state(void){
 	char buffer [16];
-	sprintf(buffer, "%.2f", temperatura_atual);  // Convert float to string with 2 decimal places
-	clear_display();
-	write_string_line(1,"");
-	write_string_LCD(buffer);
-	write_string_LCD("\xDF" "C |TL:");
-	sprintf(buffer, "%.0f", temperatura_limite);  // Convert float to string with 2 decimal places
-	write_string_LCD(buffer);
-	write_string_LCD("\xDF" "C");
-	get_name(variedade,buffer);
-	write_string_line(2,buffer);
-	write_string_LCD("| ");
-	get_day_night(flag_turno_dia,buffer);
-	write_string_LCD(buffer);
+	while(1){
+		sprintf(buffer, "%.2f", temperatura_atual);  // Convert float to string with 2 decimal places
+		clear_display();
+		write_string_line(1,"");
+		write_string_LCD(buffer);
+		write_string_LCD("\xDF" "C |TL:");
+		sprintf(buffer, "%.0f", temperatura_limite);  // Convert float to string with 2 decimal places
+		write_string_LCD(buffer);
+		write_string_LCD("\xDF" "C");
+		get_name(variedade,buffer);
+		write_string_line(2,buffer);
+		write_string_LCD("| ");
+		get_day_night(flag_turno_dia,buffer);
+		write_string_LCD(buffer);
+		char key = keypad_getkey();
+		if(key != 0){
+			break;
+		}
+	}
 }
 
 void menu_light(void){
@@ -742,14 +748,21 @@ void menu_light(void){
 	float light;
 	char buffer[16];
 	clear_display();
-	write_string_line(1,"Interior : ");
-	light = read_light_inside();
-	sprintf(buffer, "%.2f", light);
-	write_string_LCD(buffer);
-	write_string_line(2,"Exterior : ");
-	light = read_light_outside();
-	sprintf(buffer, "%.2f", light);
-	write_string_LCD(buffer);
+	while(1){
+		write_string_line(1,"Interior : ");
+		light = read_light_inside();
+		sprintf(buffer, "%.2f", light);
+		write_string_LCD(buffer);
+		write_string_line(2,"Exterior : ");
+		light = read_light_outside();
+		sprintf(buffer, "%.2f", light);
+		write_string_LCD(buffer);
+
+		char key = keypad_getkey();
+		if(key != 0){
+		 break;
+		}
+	}
 }
 
 char menu_operator_login(void){
@@ -781,6 +794,7 @@ char validate_user(const char* login, const char* password) {
 			return 0; // Credenciais não encontradas
 		}
 	}
+	return 0;
 }
 /* USER CODE END 4 */
 
