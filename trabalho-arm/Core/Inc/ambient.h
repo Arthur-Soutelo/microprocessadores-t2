@@ -32,6 +32,6 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 
 	void Regulate_Light_Intensity(void);
 
-	void Classify_Day_or_Night(char *flag_turno_dia);
+	void Classify_Day_or_Night(volatile char *flag_turno_dia);
 
 #endif /* INC_AMBIENT_H_ */

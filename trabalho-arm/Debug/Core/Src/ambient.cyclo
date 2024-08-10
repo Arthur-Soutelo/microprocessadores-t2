@@ -3,3 +3,4 @@
 ../Core/Src/ambient.c:50:7:read_light_outside	1
 ../Core/Src/ambient.c:63:7:read_light_inside	1
 ../Core/Src/ambient.c:77:6:Regulate_Light_Intensity	8
+../Core/Src/ambient.c:127:6:Classify_Day_or_Night	3

@@ -45,20 +45,21 @@
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
+TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
 volatile unsigned char tempo_irrigacao = 15;
 volatile unsigned char elapsed_time = 0;
-char flag_irrigacao_em_andamento = 0;
+volatile char flag_irrigacao_em_andamento = 0;
 
-char flag_temperatura_acima_limite = 0;	// 1 = Acima do Limite, 0 = Abaixo do Limite
-char flag_turno_dia = 1;		// 1 = Dia, 0 = Noite
+volatile char flag_temperatura_acima_limite = 0;	// 1 = Acima do Limite, 0 = Abaixo do Limite
+volatile char flag_turno_dia = 1;		// 1 = Dia, 0 = Noite
 char variedade = 0;		// 0-Alface, 1-Pimentao, 2-Morango
 
 float temperatura_limite = 25.0;
-float temperatura_atual;
+volatile float temperatura_atual;
 
 /* USER CODE END PV */
 
@@ -69,6 +70,7 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 void select_params(void);
 void menu_main(void);
@@ -76,6 +78,8 @@ void menu_selection(void);
 void menu_plant_selection(void);
 void menu_temperature_selection(void);
 void get_name(char code, char* buffer);
+void get_day_night(char code, char* buffer);
+void menu_actual_state(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -84,10 +88,12 @@ void get_name(char code, char* buffer);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+	// TIMER 3 -> IRRIGACAO (Periodo 1s)
     if (htim->Instance == TIM3)
     {
     	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 
+    	/* ============================== IRRIGACAO ============================== */
     	elapsed_time++;
     	if(elapsed_time >= tempo_irrigacao && flag_irrigacao_em_andamento == 1){
     		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
@@ -101,7 +107,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     	else if(elapsed_time >= 60 && flag_irrigacao_em_andamento == 0){
 			elapsed_time=0;
 		}
+
+    	/* ==================== DEFINE VARIAVEIS DO SISTEMA ==================== */
+    	temperatura_atual = Read_Temperature();
+		if(temperatura_atual > temperatura_limite){
+			flag_temperatura_acima_limite = 1;	// 1 = Acima do Limite, 0 = Abaixo do Limite
+		}else{
+			flag_temperatura_acima_limite = 0;	// 1 = Acima do Limite, 0 = Abaixo do Limite
+		}
+		Classify_Day_or_Night(&flag_turno_dia);
+		select_params();
+
     }
+    // TIMER 2 -> IRRIGACAO (Periodo 5s)
+	if (htim->Instance == TIM2){
+
+		//menu_actual_state();
+	}
 }
 /* USER CODE END 0 */
 
@@ -139,6 +161,7 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 //  HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_1);
 //  HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_2);
@@ -146,6 +169,7 @@ int main(void)
   /* Enable interrupt by timer 3*/
   HAL_TIM_Base_Start_IT(&htim3);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);
+  HAL_TIM_Base_Start_IT(&htim2);
 
   init_LCD();
   keypad_init();
@@ -155,17 +179,17 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  temperatura_atual = Read_Temperature();
   menu_main();
   while (1)
   {
+	  menu_actual_state();
 	 char key = keypad_getkey();
 	 if(key != 0){
 		 menu_selection();
 	 }
 
 	 Regulate_Light_Intensity();
-	 Classify_Day_or_Night(flag_turno_dia);
-
 
 //	 // Mostra intensidade luminosa
 //	 float light = read_light_inside();
@@ -271,6 +295,51 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 35999;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_DOWN;
+  htim2.Init.Period = 9999;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 
@@ -575,15 +644,41 @@ void get_name(char code, char* buffer) {
     }
 }
 
+void get_day_night(char code, char* buffer) {
+    switch(code) {
+        case 0:
+            strcpy(buffer, "Noite");
+            break;
+        case 1:
+            strcpy(buffer, "Dia");
+            break;
+        default:
+            strcpy(buffer, "Unknown"); // Handle unexpected code values
+            break;
+    }
+}
+
 void menu_main(void){
 	char buffer [16];
-	temperatura_atual = Read_Temperature();
 	sprintf(buffer, "%.2f", temperatura_atual);  // Convert float to string with 2 decimal places
 	clear_display();
 	write_string_line(1,"   Smart-fARM");
 	write_string_line(2,"    ");
 	write_string_LCD(buffer);
 	write_string_LCD("\xDF" "C");
+}
+
+void menu_actual_state(void){
+	char buffer [16];
+	sprintf(buffer, "%.2f", temperatura_atual);  // Convert float to string with 2 decimal places
+	clear_display();
+	write_string_line(1,"");
+	write_string_LCD(buffer);
+	write_string_LCD("\xDF" "C |  ");
+	get_day_night(flag_turno_dia,buffer);
+	write_string_LCD(buffer);
+
+	write_string_line(2,"    ");
 }
 
 /* USER CODE END 4 */
