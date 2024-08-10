@@ -55,7 +55,7 @@ char flag_irrigacao_em_andamento = 0;
 
 char flag_temperatura_acima_limite;	// 1 = Acima do Limite, 0 = Abaixo do Limite
 char flag_turno_dia;		// 1 = Dia, 0 = Noite
-char variedade[10];
+char variedade;		// 0-Alface, 1-Pimentao, 2-Morango
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,23 +71,6 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // Interrupt handler for TIM2 Channel 1 and Channel 2
-//void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
-//{
-//    if (htim->Instance == TIM2)
-//    {
-////        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
-////        {
-////            // Handle Channel 1 interrupt
-////            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3); // Example action: Toggle an LED
-////        }
-////        else if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)
-////        {
-////            // Handle Channel 2 interrupt
-////            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_3); // Example action: Toggle another LED
-////            HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-////        }
-//    }
-//}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
@@ -444,6 +427,59 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void select_params(void){
+
+	switch(variedade){
+		// ALFACE
+		case 0:
+			if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 1){
+				tempo_irrigacao = 17;
+			}
+			else if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 0){
+				tempo_irrigacao = 15;
+			}
+			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 1){
+				tempo_irrigacao = 10;
+			}
+			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 0){
+				tempo_irrigacao = 7;
+			}
+		break;
+		// PIMENTAO
+		case 1:
+			if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 1){
+				tempo_irrigacao = 13;
+			}
+			else if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 0){
+				tempo_irrigacao = 10;
+			}
+			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 1){
+				tempo_irrigacao = 6;
+			}
+			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 0){
+				tempo_irrigacao = 3;
+			}
+		break;
+		// MORANGO
+		case 2:
+			if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 1){
+				tempo_irrigacao = 19;
+			}
+			else if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 0){
+				tempo_irrigacao = 17;
+			}
+			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 1){
+				tempo_irrigacao = 13;
+			}
+			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 0){
+				tempo_irrigacao = 10;
+			}
+		break;
+	}
+
+}
+
 
 /* USER CODE END 4 */
 
