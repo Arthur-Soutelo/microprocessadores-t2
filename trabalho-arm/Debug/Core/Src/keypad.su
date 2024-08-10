@@ -2,3 +2,5 @@
 ../Core/Src/keypad.c:49:6:keypad_init	8	static
 ../Core/Src/keypad.c:57:6:keypad_getkey	48	static
 ../Core/Src/keypad.c:112:7:read_temperature_keypad	24	static
+../Core/Src/keypad.c:159:6:read_login	24	static
+../Core/Src/keypad.c:198:6:read_pwd	24	static

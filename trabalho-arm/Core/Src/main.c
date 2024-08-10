@@ -83,6 +83,10 @@ void get_name(char code, char* buffer);
 void get_day_night(char code, char* buffer);
 void menu_actual_state(void);
 void menu_light(void);
+
+void menu_selection_operator(void);
+char validate_user(const char* login, const char* password);
+char menu_operator_login(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -589,7 +593,7 @@ void select_params(void){
 
 void menu_selection(void){
 	selected_menu = 2;
-	const char *options[] = {"  Informacoes", " Mudar Temp " "\xDF" "C", "  Mudar Planta", "Incidencia Solar", "      Sair"};
+	const char *options[] = {"  Informacoes", " Modo Operador", "Incidencia Solar", "      Sair"};
 	char num_options = sizeof(options) / sizeof(options[0]);
 	char option = navigate_options(options, num_options);
 	switch(option){
@@ -598,22 +602,58 @@ void menu_selection(void){
 			selected_menu = 1;
 			break;
 		case 1:
+			char response = menu_operator_login();
+			selected_menu = 1;
+			if(response){
+				menu_selection_operator();
+			}else{
+				clear_display();
+				write_string_line(1, " Login Invalido");
+				HAL_Delay(3000);
+			}
+			break;
+		case 2:
 			menu_temperature_selection();
 			menu_main();
 			select_params();
 			selected_menu = 0;
 			break;
-		case 2:
+		case 3:
 			menu_plant_selection();
 			menu_main();
 			select_params();
 			selected_menu = 0;
 			break;
-		case 3:
+		case 4:
 			menu_light();
 			selected_menu = 3;
 			break;
-		case 4:
+		case 5:
+			menu_main();
+			selected_menu = 0;
+			break;
+	}
+}
+
+void menu_selection_operator(void){
+	selected_menu = 2;
+	const char *options[] = {" Mudar Temp " "\xDF" "C", "  Mudar Planta", "      Sair"};
+	char num_options = sizeof(options) / sizeof(options[0]);
+	char option = navigate_options(options, num_options);
+	switch(option){
+		case 0:
+			menu_temperature_selection();
+			menu_main();
+			select_params();
+			selected_menu = 0;
+			break;
+		case 1:
+			menu_plant_selection();
+			menu_main();
+			select_params();
+			selected_menu = 0;
+			break;
+		case 2:
 			menu_main();
 			selected_menu = 0;
 			break;
@@ -725,6 +765,40 @@ void menu_light(void){
 	write_string_LCD(buffer);
 }
 
+char menu_operator_login(void){
+	clear_display();
+	write_string_line(1, " MODO OPERADOR");
+	HAL_Delay(3000);
+
+	char login[7]; // Ajuste o tamanho conforme necessário
+	read_login(login);
+
+	// Define the source string
+	char login_line[16] = "User: ";
+	// Concatenate the source string to the destination string
+	strncat(login_line, login, 7);
+
+	char pwd[7]; // Ajuste o tamanho conforme necessário
+	read_pwd(login_line, pwd);
+
+	char response;
+	response = validate_user(login, pwd);
+	return response;
+}
+
+// Função para validar credenciais de usuário
+char validate_user(const char* login, const char* password) {
+	if(login[0] != 0 && password[0] != 0){ // Garante que login e senha não estão vazios
+		char user[] = "123456";
+		char pwd[] = "123456";
+
+		if (strcmp(user, login) == 0 && strcmp(pwd, password) == 0) {
+			return 1; // Credenciais correspondem
+		}else{
+			return 0; // Credenciais não encontradas
+		}
+	}
+}
 /* USER CODE END 4 */
 
 /**

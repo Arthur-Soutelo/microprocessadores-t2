@@ -154,3 +154,83 @@ float read_temperature_keypad(char *buffer) {
 	}
 
 }
+
+// Function to read login number from the keypad
+void read_login(char *login_number) {
+    char key;
+    char index_login = 0;
+
+    clear_display();
+    write_string_line(1, "User: ");
+    write_string_line(2, "Pwd : ");
+
+    // Initialize login buffer
+    memset(login_number, 0, 6 + 1);
+
+    while (index_login < 6) {
+        key = keypad_getkey();
+        if (key != 0) { // Check if a key is pressed
+            if (key >= '0' && key <= '9') { // Check if the key is a digit
+                login_number[index_login++] = key; // Store the digit in the card_number buffer
+                clear_display();
+                write_string_line(1, "User: ");
+                write_string_LCD(login_number);
+                write_string_line(2, "Pwd : ");
+            } else if (key == '#') { // Use '#' as an enter key
+                break; // Exit loop when '#' is pressed
+            } else if (key == '*') { // Use '*' to cancel input
+                // Optionally, clear the card_number buffer
+                memset(login_number, 0, 6 + 1);
+                index_login = 0; // Reset index
+                clear_display();
+                write_string_line(1, "User: ");
+                write_string_LCD(login_number);
+                write_string_line(2, "Pwd : ");
+            }
+            // Add a small delay to debounce
+            HAL_Delay(100); // Adjust delay as needed
+        }
+    }
+    login_number[index_login] = '\0'; // Null-terminate the card number
+}
+
+// Function to read a card number from the keypad
+void read_pwd(const char *login_line, char *pwd) {
+    char key;
+    char index_pwd = 0;
+
+    clear_display();
+    write_string_line(1, login_line);
+    write_string_line(2, "Pwd : ");
+
+    // Initialize pwd buffer
+    memset(pwd, 0, 6 + 1);
+
+    while (index_pwd < 6) {
+        key = keypad_getkey();
+        if (key != 0) { // Check if a key is pressed
+            if (key >= '0' && key <= '9') { // Check if the key is a digit
+                pwd[index_pwd++] = key; // Store the digit in the card_number buffer
+                clear_display();
+                write_string_line(1, login_line);
+                write_string_line(2, "Pwd : ");
+                for (char i = 0; i < index_pwd; i++) {
+                    write_string_LCD("*"); // Mask the password input
+                }
+            } else if (key == '#') { // Use '#' as an enter key
+                break; // Exit loop when '#' is pressed
+            } else if (key == '*') { // Use '*' to cancel input
+                // Optionally, clear the card_number buffer
+                memset(pwd, 0, 6 + 1);
+                index_pwd = 0; // Reset index
+                clear_display();
+                write_string_line(1, login_line);
+                write_string_line(2, "Pwd : ");
+                write_string_LCD(pwd);
+            }
+            HAL_Delay(100); // Adjust delay as needed
+        }
+    }
+    pwd[index_pwd] = '\0'; // Null-terminate the card number
+}
+
