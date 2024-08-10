@@ -48,10 +48,9 @@ DMA_HandleTypeDef hdma_adc1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-int tempo_irrigacao = 10;
-volatile unsigned int elapsed_time = 0;
+volatile unsigned char tempo_irrigacao = 10;
+volatile unsigned char elapsed_time = 0;
 char flag_irrigacao_em_andamento = 0;
-
 
 char flag_temperatura_acima_limite;	// 1 = Acima do Limite, 0 = Abaixo do Limite
 char flag_turno_dia;		// 1 = Dia, 0 = Noite
@@ -65,7 +64,9 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-
+void select_params(void);
+void menu_selection(void);
+void get_name(char code, char* buffer);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -89,6 +90,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     	else if(elapsed_time >= 60 && flag_irrigacao_em_andamento == 0){
 			elapsed_time=0;
 		}
+    	else{
+    		elapsed_time=0;
+    	}
 
     }
 }
@@ -147,6 +151,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 //  int ldr1_value;
 //  int ldr2_value;
+  menu_selection();
   while (1)
   {
 //	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
@@ -445,7 +450,7 @@ void select_params(void){
 			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 0){
 				tempo_irrigacao = 7;
 			}
-		break;
+			break;
 		// PIMENTAO
 		case 1:
 			if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 1){
@@ -460,7 +465,7 @@ void select_params(void){
 			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 0){
 				tempo_irrigacao = 3;
 			}
-		break;
+			break;
 		// MORANGO
 		case 2:
 			if(flag_turno_dia == 1 && flag_temperatura_acima_limite == 1){
@@ -475,11 +480,39 @@ void select_params(void){
 			else if(flag_turno_dia == 0 && flag_temperatura_acima_limite == 0){
 				tempo_irrigacao = 10;
 			}
-		break;
+			break;
 	}
 
 }
 
+void menu_selection(void){
+	const char *options[] = {"     Alface", "    Pimentao", "    Morango"};
+	char num_options = sizeof(options) / sizeof(options[0]);
+	variedade = navigate_options(options, num_options);
+	char buffer[16];
+	get_name(variedade, buffer);
+	clear_display();
+	write_string_line(1, buffer);
+	write_string_line(2, "  Selecionado");
+	HAL_Delay(3000);
+}
+
+void get_name(char code, char* buffer) {
+    switch(code) {
+        case 0:
+            strcpy(buffer, "     Alface");
+            break;
+        case 1:
+            strcpy(buffer, "    Pimentao");
+            break;
+        case 2:
+            strcpy(buffer, "    Morango");
+            break;
+        default:
+            strcpy(buffer, "Unknown"); // Handle unexpected code values
+            break;
+    }
+}
 
 /* USER CODE END 4 */
 

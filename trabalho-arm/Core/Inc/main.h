@@ -34,6 +34,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>         // Include standard integer types
+#include <string.h>  // For strcpy
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
