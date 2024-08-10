@@ -57,6 +57,7 @@ char flag_turno_dia = 1;		// 1 = Dia, 0 = Noite
 char variedade = 0;		// 0-Alface, 1-Pimentao, 2-Morango
 
 float temperatura_limite = 30.0;
+float temperatura_atual;
 
 volatile unsigned int timeout = 0;
 /* USER CODE END PV */
@@ -69,8 +70,10 @@ static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 void select_params(void);
+void menu_main(void);
 void menu_selection(void);
 void menu_plant_selection(void);
+void menu_temperature_selection(void);
 void get_name(char code, char* buffer);
 /* USER CODE END PFP */
 
@@ -146,67 +149,20 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim3);
 
   init_LCD();
-  //keypad_init();
+  keypad_init();
 
-  clear_display();
-  write_string_line(1,"   Smart-fARM");
-  write_string_line(2,"");
   HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);// Desliga o Led
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//  int ldr1_value;
-//  int ldr2_value;
-  menu_selection();
+  menu_main();
   while (1)
   {
-//	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	  HAL_Delay(1000);
-
-//	clear_display();
-//	write_string_line(1,"   Smart-fARM");
-//	HAL_Delay(2000);
-
 	 char key = keypad_getkey();
 	 if(key != 0){
-		 clear_display();
-		 write_string_line(1,"GOT KEY: ");
-		 write_data_LCD(key);
-		 HAL_Delay(2000);
-		 clear_display();
-		 write_string_line(1,"   Smart-fARM");
-		 write_string_line(2,"");
+		 menu_selection();
 	 }
-
-//	 // Read LDR1 value from PA0 (ADC1_IN0)
-//	 ldr1_value = read_adc_value(ADC_CHANNEL_0);
-//	 // Read LDR2 value from PA1 (ADC1_IN1)
-//	 ldr2_value = read_adc_value(ADC_CHANNEL_1);
-//	 char buffer [16];
-//	 itoa(ldr1_value,buffer,10);
-//	 clear_display();
-//	 write_string_line(1,buffer);
-//	 itoa(ldr2_value,buffer,10);
-//	 write_string_line(2,buffer);
-
-	 float temperature;
-	 char buffer [16];
-	 temperature = Read_Temperature();
-	 sprintf(buffer, "%.2f", temperature);  // Convert float to string with 2 decimal places
-	 clear_display();
-	 write_string_line(1,"   Smart-fARM");
-	 write_string_line(2,"    ");
-	 write_string_LCD(buffer);
-	 write_string_LCD("\xDF" "C");
-	 HAL_Delay(2000);
-
-
-//	 ldr2_value = read_adc_value(ADC_CHANNEL_TEMPSENSOR);
-//	 char buffer [16];
-//	 itoa(ldr2_value,buffer,10);
-//	 clear_display();
-//	 write_string_line(1,buffer);
 
     /* USER CODE END WHILE */
 
@@ -493,7 +449,7 @@ void select_params(void){
 }
 
 void menu_selection(void){
-	const char *options[] = {" Mudar Temp " "\xDF" "C", "  Mudar Planta"};
+	const char *options[] = {" Mudar Temp " "\xDF" "C", "  Mudar Planta", "      Sair"};
 	char num_options = sizeof(options) / sizeof(options[0]);
 	char option = navigate_options(options, num_options);
 	switch(option){
@@ -502,6 +458,9 @@ void menu_selection(void){
 			break;
 		case 1:
 			menu_plant_selection();
+			break;
+		case 2:
+			menu_main();
 			break;
 	}
 }
@@ -546,6 +505,17 @@ void get_name(char code, char* buffer) {
             strcpy(buffer, "Unknown"); // Handle unexpected code values
             break;
     }
+}
+
+void menu_main(void){
+	char buffer [16];
+	temperatura_atual = Read_Temperature();
+	sprintf(buffer, "%.2f", temperatura_atual);  // Convert float to string with 2 decimal places
+	clear_display();
+	write_string_line(1,"   Smart-fARM");
+	write_string_line(2,"    ");
+	write_string_LCD(buffer);
+	write_string_LCD("\xDF" "C");
 }
 
 /* USER CODE END 4 */
