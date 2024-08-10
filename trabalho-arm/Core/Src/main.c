@@ -61,7 +61,7 @@ char variedade = 0;		// 0-Alface, 1-Pimentao, 2-Morango
 float temperatura_limite = 25.0;
 volatile float temperatura_atual;
 
-volatile char selected_menu = 0; // 0-Principal, 1-Informacoes Sistema, 2-Selecao, 3-Intensidade Solar
+volatile char selected_menu = 0; // 0-Principal, 1-Informacoes Sistema, 2-Selecao, 3-Intensidade Luz, 4-Operador
 
 /* USER CODE END PV */
 
@@ -202,9 +202,13 @@ int main(void)
 			menu_actual_state();
 			break;
 		case 2:
+			menu_selection();
 			break;
 		case 3:
 			menu_light();
+			break;
+		case 4:
+			menu_selection_operator();
 			break;
 	}
 
@@ -593,7 +597,7 @@ void select_params(void){
 
 void menu_selection(void){
 	selected_menu = 2;
-	const char *options[] = {"  Informacoes", " Modo Operador", "Incidencia Solar", "      Sair"};
+	const char *options[] = {"  Informacoes", " Modo Operador", "Intensidade Luz", "      Sair"};
 	char num_options = sizeof(options) / sizeof(options[0]);
 	char option = navigate_options(options, num_options);
 	switch(option){
@@ -603,9 +607,9 @@ void menu_selection(void){
 			break;
 		case 1:
 			char response = menu_operator_login();
-			selected_menu = 1;
 			if(response){
 				menu_selection_operator();
+				selected_menu = 4;
 			}else{
 				clear_display();
 				write_string_line(1, " Login Invalido");
@@ -624,22 +628,17 @@ void menu_selection(void){
 }
 
 void menu_selection_operator(void){
-	selected_menu = 2;
 	const char *options[] = {" Mudar Temp " "\xDF" "C", "  Mudar Planta", "      Sair"};
 	char num_options = sizeof(options) / sizeof(options[0]);
 	char option = navigate_options(options, num_options);
 	switch(option){
 		case 0:
 			menu_temperature_selection();
-			menu_main();
 			select_params();
-			selected_menu = 0;
 			break;
 		case 1:
 			menu_plant_selection();
-			menu_main();
 			select_params();
-			selected_menu = 0;
 			break;
 		case 2:
 			menu_main();
@@ -754,10 +753,6 @@ void menu_light(void){
 }
 
 char menu_operator_login(void){
-	clear_display();
-	write_string_line(1, " MODO OPERADOR");
-	HAL_Delay(3000);
-
 	char login[7]; // Ajuste o tamanho conforme necessário
 	read_login(login);
 
