@@ -613,22 +613,10 @@ void menu_selection(void){
 			}
 			break;
 		case 2:
-			menu_temperature_selection();
-			menu_main();
-			select_params();
-			selected_menu = 0;
-			break;
-		case 3:
-			menu_plant_selection();
-			menu_main();
-			select_params();
-			selected_menu = 0;
-			break;
-		case 4:
 			menu_light();
 			selected_menu = 3;
 			break;
-		case 5:
+		case 3:
 			menu_main();
 			selected_menu = 0;
 			break;
