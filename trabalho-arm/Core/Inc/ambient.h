@@ -24,7 +24,6 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 	#define PWM_STEP_SIZE      2  // Define a smaller step size for adjustments
 	#define PWM_DEAD_ZONE      5  // Define a dead zone to prevent rapid toggling
 
-
 	void Regulate_Light_Intensity(void);
 
 #endif /* INC_AMBIENT_H_ */

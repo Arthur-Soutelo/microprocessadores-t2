@@ -74,28 +74,6 @@ float read_light_inside(void) {
 }
 
 
-//void Regulate_Light_Intensity(void){
-//    // Step 1: Calculate the LDR percentage
-//    float ldr_percentage = read_light_inside();
-//
-//    // Step 2: Adjust the PWM duty cycle based on LDR percentage
-//    if (ldr_percentage < LDR_MIN_THRESHOLD) {
-//        // Increase light intensity (increase PWM duty cycle)
-//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) + 1);
-//    } else if (ldr_percentage > LDR_MAX_THRESHOLD) {
-//        // Decrease light intensity (decrease PWM duty cycle)
-//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) - 1);
-//    }
-//
-//    // Ensure PWM duty cycle stays within valid range (0 to ARR)
-//    if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) > htim4.Init.Period) {
-//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, htim4.Init.Period);
-//    } else if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) < 0) {
-//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
-//    }
-//}
-
-
 void Regulate_Light_Intensity(void) {
     // Step 1: Calculate the LDR percentage
     float ldr_percentage = read_light_inside();
