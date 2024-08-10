@@ -53,7 +53,7 @@ float read_light_outside(void) {
     // Read LDR1 value from PA0 (ADC1_IN0)
     adcValue = read_adc_value(ADC_CHANNEL_0);
 
-    return adcValue;
+    return (float)adcValue/4095;
 }
 
 float read_light_inside(void) {
@@ -62,5 +62,5 @@ float read_light_inside(void) {
     // Read LDR1 value from PA0 (ADC1_IN0)
     adcValue = read_adc_value(ADC_CHANNEL_1);
 
-    return adcValue;
+    return (float)adcValue/4095;
 }

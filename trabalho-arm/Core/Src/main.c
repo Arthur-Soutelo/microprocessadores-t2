@@ -48,7 +48,7 @@ DMA_HandleTypeDef hdma_adc1;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
-volatile unsigned char tempo_irrigacao = 10;
+volatile unsigned char tempo_irrigacao = 15;
 volatile unsigned char elapsed_time = 0;
 char flag_irrigacao_em_andamento = 0;
 
@@ -86,6 +86,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM3)
     {
     	timeout++;
+    	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 
     	elapsed_time++;
     	if(elapsed_time >= tempo_irrigacao && flag_irrigacao_em_andamento == 1){
@@ -100,10 +101,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     	else if(elapsed_time >= 60 && flag_irrigacao_em_andamento == 0){
 			elapsed_time=0;
 		}
-    	else{
-    		elapsed_time=0;
-    	}
-
     }
 }
 /* USER CODE END 0 */
@@ -455,9 +452,13 @@ void menu_selection(void){
 	switch(option){
 		case 0:
 			menu_temperature_selection();
+			menu_main();
+			select_params();
 			break;
 		case 1:
 			menu_plant_selection();
+			menu_main();
+			select_params();
 			break;
 		case 2:
 			menu_main();
