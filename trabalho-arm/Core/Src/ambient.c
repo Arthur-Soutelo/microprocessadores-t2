@@ -129,10 +129,10 @@ void Classify_Day_or_Night(volatile char *flag_turno_dia) {
     float ldr_percentage = read_light_outside();
 
     // Verifica se é NOITE
-    if (ldr_percentage < LDR_NIGHT_THRESHOLD - LDR_DEAD_ZONE) {
+    if (ldr_percentage < LDR_NIGHT_THRESHOLD) {
     	*flag_turno_dia = 0;		// 1 = Dia, 0 = Noite
     // Verifica se é DIA
-    } else if (ldr_percentage > LDR_DAY_THRESHOLD + LDR_DEAD_ZONE) {
+    } else if (ldr_percentage > LDR_DAY_THRESHOLD) {
     	*flag_turno_dia = 1;		// 1 = Dia, 0 = Noite
     } else {
 
