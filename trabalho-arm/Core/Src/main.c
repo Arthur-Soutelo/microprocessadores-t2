@@ -45,7 +45,6 @@
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
-TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
@@ -61,6 +60,8 @@ char variedade = 0;		// 0-Alface, 1-Pimentao, 2-Morango
 float temperatura_limite = 25.0;
 volatile float temperatura_atual;
 
+volatile char selected_menu = 0; // 0-Principal, 1-Informacoes Sistema, 2-Selecao
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,7 +71,6 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
-static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 void select_params(void);
 void menu_main(void);
@@ -119,11 +119,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		select_params();
 
     }
-    // TIMER 2 -> IRRIGACAO (Periodo 5s)
-	if (htim->Instance == TIM2){
-
-		//menu_actual_state();
-	}
 }
 /* USER CODE END 0 */
 
@@ -161,7 +156,6 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
-  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 //  HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_1);
 //  HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_2);
@@ -179,17 +173,27 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  temperatura_atual = Read_Temperature();
-  menu_main();
+//  temperatura_atual = Read_Temperature();
+//  menu_main();
   while (1)
   {
-	  menu_actual_state();
+
 	 char key = keypad_getkey();
 	 if(key != 0){
 		 menu_selection();
 	 }
 
 	 Regulate_Light_Intensity();
+
+	// 0-Principal, 1-Informacoes Sistema, 2-Selecao
+	switch(selected_menu) {
+		case 0:
+			menu_main();
+			break;
+		case 1:
+			menu_actual_state();
+			break;
+	}
 
 //	 // Mostra intensidade luminosa
 //	 float light = read_light_inside();
@@ -295,51 +299,6 @@ static void MX_ADC1_Init(void)
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
-
-}
-
-/**
-  * @brief TIM2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM2_Init(void)
-{
-
-  /* USER CODE BEGIN TIM2_Init 0 */
-
-  /* USER CODE END TIM2_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM2_Init 1 */
-
-  /* USER CODE END TIM2_Init 1 */
-  htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 35999;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_DOWN;
-  htim2.Init.Period = 9999;
-  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM2_Init 2 */
-
-  /* USER CODE END TIM2_Init 2 */
 
 }
 
@@ -582,22 +541,30 @@ void select_params(void){
 }
 
 void menu_selection(void){
-	const char *options[] = {" Mudar Temp " "\xDF" "C", "  Mudar Planta", "      Sair"};
+	selected_menu = 2;
+	const char *options[] = {"  Informacoes", " Mudar Temp " "\xDF" "C", "  Mudar Planta", "      Sair"};
 	char num_options = sizeof(options) / sizeof(options[0]);
 	char option = navigate_options(options, num_options);
 	switch(option){
 		case 0:
+			menu_actual_state();
+			selected_menu = 1;
+			break;
+		case 1:
 			menu_temperature_selection();
 			menu_main();
 			select_params();
+			selected_menu = 0;
 			break;
-		case 1:
+		case 2:
 			menu_plant_selection();
 			menu_main();
 			select_params();
+			selected_menu = 0;
 			break;
-		case 2:
+		case 3:
 			menu_main();
+			selected_menu = 0;
 			break;
 	}
 }
@@ -606,13 +573,19 @@ void menu_temperature_selection(void){
 	clear_display();
 	write_string_line(1,"Digite o Valor:");
 	char buffer[3];
-	temperatura_limite = read_temperature_keypad(buffer);
-	clear_display();
-	write_string_line(1, "Temp Selecionada");
-	write_string_line(2, "      ");
-	write_string_LCD(buffer);
-	write_string_LCD("\xDF" "C");
-	HAL_Delay(3000);
+	float temp = read_temperature_keypad(buffer);
+	if(temp != -1.0){
+		temperatura_limite = temp;
+		clear_display();
+		write_string_line(1, "Temp Selecionada");
+		write_string_line(2, "      ");
+		write_string_LCD(buffer);
+		write_string_LCD("\xDF" "C");
+		HAL_Delay(3000);
+	}else{
+
+	}
+
 }
 
 void menu_plant_selection(void){

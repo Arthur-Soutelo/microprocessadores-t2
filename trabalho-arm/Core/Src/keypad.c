@@ -150,7 +150,7 @@ float read_temperature_keypad(char *buffer) {
 		write_string_line(1,"Valor Invalido!");
 		write_string_line(2," 19 < Temp < 32");
 		HAL_Delay(2000); // Exibe a mensagem de erro por 2 segundos
-		return 30.0; // Reseta o valor para 30.0
+		return -1.0; // Envia erro
 	}
 
 }
