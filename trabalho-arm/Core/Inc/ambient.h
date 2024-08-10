@@ -14,4 +14,17 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 	float read_light_outside(void);
 	float read_light_inside(void);
 
+	extern TIM_HandleTypeDef htim4;
+	extern ADC_HandleTypeDef hadc1;
+
+	#define LDR_MIN_THRESHOLD 0.60  // 60% of full scale
+	#define LDR_MAX_THRESHOLD 0.70  // 70% of full scale
+	#define ADC_FULL_SCALE    4095  // Assuming 12-bit ADCs
+
+	#define PWM_STEP_SIZE      2  // Define a smaller step size for adjustments
+	#define PWM_DEAD_ZONE      5  // Define a dead zone to prevent rapid toggling
+
+
+	void Regulate_Light_Intensity(void);
+
 #endif /* INC_AMBIENT_H_ */

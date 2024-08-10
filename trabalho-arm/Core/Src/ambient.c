@@ -53,7 +53,11 @@ float read_light_outside(void) {
     // Read LDR1 value from PA0 (ADC1_IN0)
     adcValue = read_adc_value(ADC_CHANNEL_0);
 
-    return (float)adcValue/4095;
+   // Convert ADC value to a percentage of light intensity
+   float lightIntensity = (float)adcValue / ADC_FULL_SCALE;
+
+   // Invert the value to reflect higher ADC values as lower light intensity
+   return 1.0f - lightIntensity;
 }
 
 float read_light_inside(void) {
@@ -62,5 +66,61 @@ float read_light_inside(void) {
     // Read LDR1 value from PA0 (ADC1_IN0)
     adcValue = read_adc_value(ADC_CHANNEL_1);
 
-    return (float)adcValue/4095;
+   // Convert ADC value to a percentage of light intensity
+   float lightIntensity = (float)adcValue / ADC_FULL_SCALE;
+
+   // Invert the value to reflect higher ADC values as lower light intensity
+   return 1.0f - lightIntensity;
 }
+
+
+//void Regulate_Light_Intensity(void){
+//    // Step 1: Calculate the LDR percentage
+//    float ldr_percentage = read_light_inside();
+//
+//    // Step 2: Adjust the PWM duty cycle based on LDR percentage
+//    if (ldr_percentage < LDR_MIN_THRESHOLD) {
+//        // Increase light intensity (increase PWM duty cycle)
+//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) + 1);
+//    } else if (ldr_percentage > LDR_MAX_THRESHOLD) {
+//        // Decrease light intensity (decrease PWM duty cycle)
+//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) - 1);
+//    }
+//
+//    // Ensure PWM duty cycle stays within valid range (0 to ARR)
+//    if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) > htim4.Init.Period) {
+//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, htim4.Init.Period);
+//    } else if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) < 0) {
+//        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
+//    }
+//}
+
+
+void Regulate_Light_Intensity(void) {
+    // Step 1: Calculate the LDR percentage
+    float ldr_percentage = read_light_inside();
+
+    // Get the current PWM duty cycle
+    uint32_t current_compare = __HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4);
+
+    // Step 2: Adjust the PWM duty cycle based on LDR percentage
+    if (ldr_percentage < LDR_MIN_THRESHOLD - (PWM_DEAD_ZONE / 100.0f)) {
+        // Increase light intensity (increase PWM duty cycle) if it's below the threshold
+        if (current_compare < (htim4.Init.Period - PWM_STEP_SIZE)) {
+            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare + PWM_STEP_SIZE);
+        }
+    } else if (ldr_percentage > LDR_MAX_THRESHOLD + (PWM_DEAD_ZONE / 100.0f)) {
+        // Decrease light intensity (decrease PWM duty cycle) if it's above the threshold
+        if (current_compare > PWM_STEP_SIZE) {
+            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, current_compare - PWM_STEP_SIZE);
+        }
+    }
+
+    // Ensure PWM duty cycle stays within valid range (0 to ARR)
+    if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) > htim4.Init.Period) {
+        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, htim4.Init.Period);
+    } else if (__HAL_TIM_GET_COMPARE(&htim4, TIM_CHANNEL_4) < 0) {
+        __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 0);
+    }
+}
+

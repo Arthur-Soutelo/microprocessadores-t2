@@ -165,6 +165,14 @@ int main(void)
 		 menu_selection();
 	 }
 
+	 Regulate_Light_Intensity();
+
+	 float light = read_light_inside();
+	 char buffer[16];
+	 sprintf(buffer, "%.2f", light);
+	 clear_display();
+	 write_string_line(1,buffer);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
