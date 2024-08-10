@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000a2c  00000000  00000000  0001af80  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0001994c  00000000  00000000  0001b9ac  2**0
+ 16 .debug_macro  00019940  00000000  00000000  0001b9ac  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000fba6  00000000  00000000  000352f8  2**0
+ 17 .debug_line   0000fba6  00000000  00000000  000352ec  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008f4f6  00000000  00000000  00044e9e  2**0
+ 18 .debug_str    0008f4cc  00000000  00000000  00044e92  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000d4394  2**0
+ 19 .comment      00000043  00000000  00000000  000d435e  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00004b0c  00000000  00000000  000d43d8  2**2
+ 20 .debug_frame  00004b0c  00000000  00000000  000d43a4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000068  00000000  00000000  000d8ee4  2**0
+ 21 .debug_line_str 00000068  00000000  00000000  000d8eb0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -3288,7 +3288,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		}
 
     }
-    // TIMER 2
+    // TIMER 2 (Periodo 0,25s)
 	if (htim->Instance == TIM2){
  8001d16:	687b      	ldr	r3, [r7, #4]
  8001d18:	681b      	ldr	r3, [r3, #0]

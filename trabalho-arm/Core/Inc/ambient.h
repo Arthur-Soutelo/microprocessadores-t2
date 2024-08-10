@@ -27,8 +27,8 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 	#define PWM_STEP_SIZE      2  // Define a smaller step size for adjustments
 	#define LDR_DEAD_ZONE      0.05  // Define uma zona morta de 5% em torno dos limites
 
-	#define PWM_ADJUSTMENT_STEP 2  // Tamanho do ajuste pequeno para verificar a leitura do LDR
-	#define ADJUSTMENT_DELAY   50  // Atraso para permitir a estabilização da leitura
+//	#define PWM_ADJUSTMENT_STEP 2  // Tamanho do ajuste pequeno para verificar a leitura do LDR
+//	#define ADJUSTMENT_DELAY   50  // Atraso para permitir a estabilização da leitura
 
 	void Regulate_Light_Intensity(void);
 
