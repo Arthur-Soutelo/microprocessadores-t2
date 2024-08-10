@@ -17,6 +17,9 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 	extern TIM_HandleTypeDef htim4;
 	extern ADC_HandleTypeDef hadc1;
 
+	#define LDR_DAY_THRESHOLD 0.60  // 60% of full scale
+	#define LDR_NIGHT_THRESHOLD 0.30  // 30% of full scale
+
 	#define LDR_MIN_THRESHOLD 0.60  // 60% of full scale
 	#define LDR_MAX_THRESHOLD 0.70  // 70% of full scale
 	#define ADC_FULL_SCALE    4095  // Assuming 12-bit ADCs
@@ -28,5 +31,7 @@ extern ADC_HandleTypeDef hadc1;  // Declare the ADC handle
 	#define ADJUSTMENT_DELAY   50  // Atraso para permitir a estabilização da leitura
 
 	void Regulate_Light_Intensity(void);
+
+	void Classify_Day_or_Night(char *flag_turno_dia);
 
 #endif /* INC_AMBIENT_H_ */

@@ -57,10 +57,9 @@ char flag_temperatura_acima_limite = 0;	// 1 = Acima do Limite, 0 = Abaixo do Li
 char flag_turno_dia = 1;		// 1 = Dia, 0 = Noite
 char variedade = 0;		// 0-Alface, 1-Pimentao, 2-Morango
 
-float temperatura_limite = 30.0;
+float temperatura_limite = 25.0;
 float temperatura_atual;
 
-volatile unsigned int timeout = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,7 +86,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-    	timeout++;
     	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 
     	elapsed_time++;
@@ -166,12 +164,15 @@ int main(void)
 	 }
 
 	 Regulate_Light_Intensity();
+	 Classify_Day_or_Night(flag_turno_dia);
 
-	 float light = read_light_inside();
-	 char buffer[16];
-	 sprintf(buffer, "%.2f", light);
-	 clear_display();
-	 write_string_line(1,buffer);
+
+//	 // Mostra intensidade luminosa
+//	 float light = read_light_inside();
+//	 char buffer[16];
+//	 sprintf(buffer, "%.2f", light);
+//	 clear_display();
+//	 write_string_line(1,buffer);
 
     /* USER CODE END WHILE */
 
