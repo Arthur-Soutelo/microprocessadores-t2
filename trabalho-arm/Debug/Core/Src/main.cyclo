@@ -11,8 +11,8 @@
 ../Core/Src/main.c:584:6:menu_selection	5
 ../Core/Src/main.c:605:6:menu_temperature_selection	1
 ../Core/Src/main.c:618:6:menu_plant_selection	1
-../Core/Src/main.c:630:6:get_name	5
-../Core/Src/main.c:647:6:get_day_night	3
-../Core/Src/main.c:661:6:menu_main	1
-../Core/Src/main.c:671:6:menu_actual_state	1
-../Core/Src/main.c:690:6:Error_Handler	1
+../Core/Src/main.c:631:6:get_name	5
+../Core/Src/main.c:648:6:get_day_night	3
+../Core/Src/main.c:662:6:menu_main	1
+../Core/Src/main.c:672:6:menu_actual_state	1
+../Core/Src/main.c:695:6:Error_Handler	1

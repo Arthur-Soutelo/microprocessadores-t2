@@ -622,7 +622,8 @@ void menu_plant_selection(void){
 	char buffer[16];
 	get_name(variedade, buffer);
 	clear_display();
-	write_string_line(1, buffer);
+	write_string_line(1, "   ");
+	write_string_LCD(buffer);
 	write_string_line(2, "  Selecionado");
 	HAL_Delay(3000);
 }
@@ -630,16 +631,16 @@ void menu_plant_selection(void){
 void get_name(char code, char* buffer) {
     switch(code) {
         case 0:
-            strcpy(buffer, "     Alface");
+            strcpy(buffer, "Alface  ");
             break;
         case 1:
-            strcpy(buffer, "    Pimentao");
+            strcpy(buffer, "Pimentao");
             break;
         case 2:
-            strcpy(buffer, "    Morango");
+            strcpy(buffer, "Morango ");
             break;
         default:
-            strcpy(buffer, "Unknown"); // Handle unexpected code values
+            strcpy(buffer, "Unknown "); // Handle unexpected code values
             break;
     }
 }
@@ -674,11 +675,15 @@ void menu_actual_state(void){
 	clear_display();
 	write_string_line(1,"");
 	write_string_LCD(buffer);
-	write_string_LCD("\xDF" "C |  ");
+	write_string_LCD("\xDF" "C |TL:");
+	sprintf(buffer, "%.0f", temperatura_limite);  // Convert float to string with 2 decimal places
+	write_string_LCD(buffer);
+	write_string_LCD("\xDF" "C");
+	get_name(variedade,buffer);
+	write_string_line(2,buffer);
+	write_string_LCD("| ");
 	get_day_night(flag_turno_dia,buffer);
 	write_string_LCD(buffer);
-
-	write_string_line(2,"    ");
 }
 
 /* USER CODE END 4 */
