@@ -1,55 +1,19 @@
 #include "ambient.h"
 
-// Temperature read function using floating-point calculation
+// Le a temperatura
 float Read_Temperature(void) {
-//	uint16_t AD_RES[2];
 	float Temperature, V_Sense, V_Ref;
-
-//    uint32_t adcValue = 0;
-//    ADC_ChannelConfTypeDef sConfig = {0};
-//
-//	// Configure the ADC channel
-//	sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
-//	sConfig.Rank = ADC_REGULAR_RANK_1;
-//	sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;  // Adjust as needed
-//	if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK) {
-//		// Handle error
-//		return -1;
-//	}
-//
-//	// Start the ADC conversion
-//	HAL_ADC_Start(&hadc1);
-//
-//	// Poll for conversion completion
-//	if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) == HAL_OK) {
-//		// Get the ADC value
-//		adcValue = HAL_ADC_GetValue(&hadc1);
-//	}
-//
-//	// Stop the ADC
-//	HAL_ADC_Stop(&hadc1);
-
-
 
 	// Calculate The Temperature
 	V_Ref = (float)((V_REF_INT * 4095.0)/AD_RES[0]);
 	V_Sense = (float)(AD_RES[1] * V_Ref) / 4095.0;
 	Temperature = (((V_AT_25C - V_Sense) * 1000.0) /AVG_SLOPE) + 25.0;
 
-//    // Convert ADC value to voltage
-//	float adcVoltage = (adcValue / 4095.0) * 3.3; // Assuming 12-bit resolution and 3.3V reference
-//
-//	// Temperature calculation
-//	// Temperature = (Vadc - V25) / Slope + T25
-//	// T25 = 25°C (reference temperature)
-//
-//	float temperature = ((adcVoltage - VOLTAGE_AT_25C) / AVG_SLOPE) + 25;
-
     return Temperature;
 }
 
 
-
+// função generica para ler valor adc dos LDRs
 uint32_t read_adc_value(uint32_t channel) {
     ADC_ChannelConfTypeDef sConfig = {0};
     uint32_t adcValue = 0;

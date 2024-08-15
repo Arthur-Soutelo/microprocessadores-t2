@@ -1,5 +1,10 @@
 /* USER CODE BEGIN Header */
 /**
+ * ******************************************************************************
+  	  	  	  	  	  	 TRABALHO 2 - MICROPROCESSADORES - I
+							  ARTHUR A S ARAUJO
+							  GABRIEL R S MENDES
+  ******************************************************************************
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
@@ -773,6 +778,7 @@ void get_day_night(char code, char* buffer) {
     }
 }
 
+// Menu principal com a temperatura
 void menu_main(void){
 	char buffer [16];
 	sprintf(buffer, "%.2f", temperatura_atual);  // Convert float to string with 2 decimal places
@@ -783,6 +789,7 @@ void menu_main(void){
 	write_string_LCD("\xDF" "C");
 }
 
+// Menu extra que mostra informações do sistema
 void menu_actual_state(void){
 	char buffer [16];
 	while(1){
