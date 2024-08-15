@@ -1,6 +1,6 @@
 ../Core/Src/ambient.c:4:7:Read_Temperature	1
-../Core/Src/ambient.c:22:10:read_adc_value	3
-../Core/Src/ambient.c:50:7:read_light_outside	1
-../Core/Src/ambient.c:63:7:read_light_inside	1
-../Core/Src/ambient.c:77:6:Regulate_Light_Intensity	6
-../Core/Src/ambient.c:134:6:Classify_Day_or_Night	3
+../Core/Src/ambient.c:53:10:read_adc_value	3
+../Core/Src/ambient.c:81:7:read_light_outside	1
+../Core/Src/ambient.c:94:7:read_light_inside	1
+../Core/Src/ambient.c:108:6:Regulate_Light_Intensity	6
+../Core/Src/ambient.c:165:6:Classify_Day_or_Night	3
